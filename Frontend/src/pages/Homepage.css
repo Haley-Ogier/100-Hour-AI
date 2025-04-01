@@ -1,4 +1,3 @@
-/* Overall container */
 .homepage-container {
     font-family: sans-serif;
     background: linear-gradient(to bottom, #fafafa, #ddd);
@@ -7,7 +6,6 @@
     padding: 0;
   }
   
-  /* Hero Section */
   .hero-section {
     text-align: center;
     padding: 4rem 2rem;
@@ -25,7 +23,6 @@
     margin-bottom: 2rem;
   }
   
-  /* Timeline Section */
   .timeline-section {
     max-width: 1000px;
     margin: 2rem auto;
@@ -40,7 +37,6 @@
     color: #2d3436;
   }
   
-  /* Expand Past Button */
   .expand-past-container {
     display: flex;
     justify-content: center;
@@ -62,7 +58,6 @@
     transform: scale(1.03);
   }
   
-  /* New Task Form */
   .new-task-form-container {
     margin: 1rem auto;
     padding: 1rem;
@@ -103,7 +98,6 @@
     transform: scale(1.02);
   }
   
-  /* Timeline Container */
   .timeline {
     position: relative;
     margin: 2rem 0;
@@ -111,7 +105,6 @@
     z-index: 0;
   }
   
-  /* The actual timeline "line" */
   .timeline::after {
     content: "";
     position: absolute;
@@ -124,7 +117,6 @@
     z-index: 1;
   }
   
-  /* Timeline items */
   .timeline-item {
     padding: 1rem;
     width: 50%;
@@ -133,7 +125,6 @@
     z-index: 2;
   }
   
-  /* Style differences between left and right columns */
   .timeline-item.left {
     left: 0;
     text-align: right;
@@ -144,12 +135,10 @@
     text-align: left;
   }
   
-  /* Hidden tasks are display: none */
   .timeline-item.hidden {
     display: none;
   }
   
-  /* Timeline Content Box */
   .timeline-content {
     background: #fff;
     border-radius: 8px;
@@ -158,7 +147,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   
-  /* Arrows for the bubble effect */
   .timeline-item.left .timeline-content::after,
   .timeline-item.right .timeline-content::after {
     content: "";
@@ -179,7 +167,6 @@
     left: -20px;
   }
   
-  /* Circle markers on the timeline line */
   .timeline-item::before {
     content: "";
     position: absolute;
@@ -200,7 +187,6 @@
     left: -10px;
   }
   
-  /* Title, date, description styles */
   .timeline-title {
     margin: 0 0 0.3rem 0;
     font-size: 1.3rem;
@@ -222,12 +208,10 @@
     color: #2d3436;
   }
   
-  /* Completed checkbox container */
   .complete-container {
     margin-top: 1rem;
   }
   
-  /* Fade-in animation */
   .fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -239,14 +223,12 @@
     transform: translateY(0);
   }
   
-  /* Infinite scroll loading hint */
   .loading-more {
     text-align: center;
     margin-top: 1rem;
     font-style: italic;
   }
   
-  /* Responsive adjustments */
   @media screen and (max-width: 768px) {
     .timeline::after {
       left: 20px;
@@ -276,21 +258,17 @@
       border-left-color: #fff;
       border-right-color: transparent;
     }
-        /* For shortTermGoal items */
     .short-term-goal .timeline-content {
-        border-left: 5px solid #fdcb6e; /* bright accent */
-        background: #fffbea; /* subtle tinted background */
+        border-left: 5px solid #fdcb6e; 
+        background: #fffbea; 
     }
     
-    /* For longTermGoal items */
     .long-term-goal .timeline-content {
         border-left: 5px solid #e17055; 
         background: #ffeae6;
     }
     
-    /* For normal tasks */
     .regular-task .timeline-content {
-        /* already has default styling, but you can do something subtle: */
         border-left: 5px solid #b2bec3;
     }
   
