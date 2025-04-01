@@ -15,7 +15,7 @@
     width: 100%;
     padding: 2rem;
     text-align: center;
-    position: fixed;
+    position: relative;
     overflow-x: hidden;
     background: linear-gradient(135deg, #81ecec, #74b9ff);
   }
