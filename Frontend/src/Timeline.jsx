@@ -20,8 +20,6 @@ function Timeline() {
   const [tasks, setTasks] = useState(allTasks);
   const [showPast, setShowPast] = useState(false);
   const [tasksToShow, setTasksToShow] = useState(4);
-  const [newTitle, setNewTitle] = useState('');
-  const [newDesc, setNewDesc] = useState('');
   const sentinelRef = useRef(null);
   const containerRef = useRef(null);
   const taskRefs = useRef([]);
@@ -58,9 +56,7 @@ function Timeline() {
           }
         });
       },
-      {
-        threshold: 0,
-      }
+      { threshold: 0 }
     );
     taskRefs.current.forEach((ref) => {
       if (ref) fadeObserverRef.current.observe(ref);
@@ -98,20 +94,6 @@ function Timeline() {
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
-
-  const onAddTask = (e) => {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
-    const newTask = {
-      title: newTitle,
-      description: newDesc,
-      id: Date.now(),
-      completed: false,
-    };
-    setTasks((prev) => [...prev, newTask]);
-    setNewTitle('');
-    setNewDesc('');
-  };
 
   const toggleComplete = (taskId) => {
     setTasks((prev) =>
@@ -155,30 +137,13 @@ function Timeline() {
     <>
       <NavBar />
       <div className="timeline-page">
-        <h1 className="timeline-title">My Vibrant Path Timeline</h1>
+        <h1 className="timeline-title">100 Hour AI Coaching</h1>
         <button
           onClick={() => setShowPast(!showPast)}
           style={{ marginBottom: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}
         >
           {showPast ? 'Hide Past' : 'Expand Past'}
         </button>
-        <div className="form-container">
-          <form className="task-form" onSubmit={onAddTask}>
-            <input
-              type="text"
-              placeholder="Task Title"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Task Description"
-              value={newDesc}
-              onChange={(e) => setNewDesc(e.target.value)}
-            />
-            <button type="submit">Add Task</button>
-          </form>
-        </div>
         <div
           className="timeline-container"
           style={{ height: timelineHeight }}

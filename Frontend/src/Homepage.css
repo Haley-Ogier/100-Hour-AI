@@ -1,0 +1,298 @@
+/* Overall container */
+.homepage-container {
+    font-family: sans-serif;
+    background: linear-gradient(to bottom, #fafafa, #ddd);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #81ecec, #74b9ff);
+    color: #fff;
+  }
+  
+  .app-title {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .app-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Timeline Section */
+  .timeline-section {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #2d3436;
+  }
+  
+  .timeline-heading {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #2d3436;
+  }
+  
+  /* Expand Past Button */
+  .expand-past-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .expand-past-button {
+    padding: 0.5rem 1rem;
+    background-color: #00cec9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .expand-past-button:hover {
+    background-color: #00b894;
+    transform: scale(1.03);
+  }
+  
+  /* New Task Form */
+  .new-task-form-container {
+    margin: 1rem auto;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 6px;
+    max-width: 500px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  
+  .new-task-form-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .new-task-form-container label {
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .new-task-form-container input {
+    margin-bottom: 1rem;
+    padding: 0.3rem;
+    font-size: 1rem;
+  }
+  
+  .new-task-form-container button {
+    padding: 0.5rem;
+    border: none;
+    background: #74b9ff;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .new-task-form-container button:hover {
+    background: #0984e3;
+    transform: scale(1.02);
+  }
+  
+  /* Timeline Container */
+  .timeline {
+    position: relative;
+    margin: 2rem 0;
+    padding: 0;
+    z-index: 0;
+  }
+  
+  /* The actual timeline "line" */
+  .timeline::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    background-color: #74b9ff;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  
+  /* Timeline items */
+  .timeline-item {
+    padding: 1rem;
+    width: 50%;
+    position: relative;
+    box-sizing: border-box;
+    z-index: 2;
+  }
+  
+  /* Style differences between left and right columns */
+  .timeline-item.left {
+    left: 0;
+    text-align: right;
+  }
+  
+  .timeline-item.right {
+    left: 50%;
+    text-align: left;
+  }
+  
+  /* Hidden tasks are display: none */
+  .timeline-item.hidden {
+    display: none;
+  }
+  
+  /* Timeline Content Box */
+  .timeline-content {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Arrows for the bubble effect */
+  .timeline-item.left .timeline-content::after,
+  .timeline-item.right .timeline-content::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+  }
+  
+  .timeline-item.left .timeline-content::after {
+    border-right-color: #fff;
+    right: -20px;
+  }
+  
+  .timeline-item.right .timeline-content::after {
+    border-left-color: #fff;
+    left: -20px;
+  }
+  
+  /* Circle markers on the timeline line */
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    top: 25px;
+    width: 20px;
+    height: 20px;
+    background-color: #81ecec;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    z-index: 3;
+  }
+  
+  .timeline-item.left::before {
+    right: -10px;
+  }
+  
+  .timeline-item.right::before {
+    left: -10px;
+  }
+  
+  /* Title, date, description styles */
+  .timeline-title {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.3rem;
+    color: #0984e3;
+  }
+  
+  .timeline-deadline {
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #636e72;
+  }
+  
+  .timeline-description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2d3436;
+  }
+  
+  /* Completed checkbox container */
+  .complete-container {
+    margin-top: 1rem;
+  }
+  
+  /* Fade-in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  
+  .fade-in.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Infinite scroll loading hint */
+  .loading-more {
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 768px) {
+    .timeline::after {
+      left: 20px;
+    }
+  
+    .timeline-item {
+      width: 100%;
+      padding-left: 50px;
+      padding-right: 20px;
+      margin-bottom: 2rem;
+    }
+  
+    .timeline-item.left,
+    .timeline-item.right {
+      left: 0;
+      text-align: left;
+    }
+  
+    .timeline-item.left::before,
+    .timeline-item.right::before {
+      left: 15px;
+    }
+  
+    .timeline-item.left .timeline-content::after,
+    .timeline-item.right .timeline-content::after {
+      left: 30px;
+      border-left-color: #fff;
+      border-right-color: transparent;
+    }
+        /* For shortTermGoal items */
+    .short-term-goal .timeline-content {
+        border-left: 5px solid #fdcb6e; /* bright accent */
+        background: #fffbea; /* subtle tinted background */
+    }
+    
+    /* For longTermGoal items */
+    .long-term-goal .timeline-content {
+        border-left: 5px solid #e17055; 
+        background: #ffeae6;
+    }
+    
+    /* For normal tasks */
+    .regular-task .timeline-content {
+        /* already has default styling, but you can do something subtle: */
+        border-left: 5px solid #b2bec3;
+    }
+  
+  }
+  
