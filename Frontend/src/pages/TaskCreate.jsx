@@ -72,17 +72,6 @@ function TaskCreate() {
                 />
               </div>
               <div className="question-column">
-                <label htmlFor="description">Description:</label>
-              </div>
-              <div className="input-column">
-                <textarea
-                  id="description"
-                  className="input-field"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="question-column">
                 <label htmlFor="type">Type:</label>
               </div>
               <div className="input-column">
@@ -97,14 +86,25 @@ function TaskCreate() {
                   <option value="longTermGoal">Long-Term Goal</option>
                 </select>
               </div>
+              <div className="question-column">
+                <label htmlFor="description">Description:</label>
+              </div>
+              <div className="input-column">
+                <textarea
+                  id="description"
+                  className="input-field"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
             </div>
-            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }} className="button-column">
               <button type="submit" className="submit-button">
                 Create task
               </button>
               <button
                 type="button"
-                className="submit-button"
+                className="cancel-button"
                 onClick={() => navigate("/")}
               >
                 Cancel

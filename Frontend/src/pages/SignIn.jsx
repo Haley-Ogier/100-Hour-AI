@@ -1,21 +1,55 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SignIn.css';
-import NavBar from './NavBar';
 
 function SignIn() {
+
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+    });
+    
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Signing in with:', formData);
+    };
+
     return(
         <>
-            <NavBar />
-            <div className='Sign-in-page'>
-                <h1 className='Sign-in-title'>Please Sign In:</h1>
-                <div className='form-container'>
-                    <form className='sign-in-form'>
-                        <input type="text" placeholder='Enter username' className="username-and-password" required /><br></br>
-                        <input type="password" placeholder='Enter password' className="username-and-password" required/>
-                        <button type="submit">Sign In</button>
-                    </form>
-                </div>
-            </div>
+    <div className="signin-page">
+      <div className="signin-container">
+        <h2>Sign In:</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input 
+              id="username" 
+              name="username" 
+              value={formData.username} 
+              onChange={handleChange} 
+              required 
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              required 
+            />
+          </div>
+          
+          <button type="submit" className="signin-btn">Sign In</button>
+        </form>
+      </div>
+    </div>
         </>
     );
 }

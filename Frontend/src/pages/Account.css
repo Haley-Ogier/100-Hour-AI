@@ -100,11 +100,12 @@
       border-radius: 5px;
       cursor: pointer;
       margin-top: 1rem;
-      transition: background 0.3s;
+      transition: background 0.2s, transform 0.2s;
   }
   
   .edit-profile-button:hover {
       background: #2d96ff;
+      transform: scale(1.03);
   }
   
   /* Account Settings */
@@ -125,10 +126,12 @@
       cursor: pointer;
       transition: all 0.3s;
       color: #5e3a7a;
+      transition: background 0.2s, transform 0.2s;
   }
   
   .settings-button:hover {
       background: #e2d4ff;
+      transform: scale(1.03);
   }
   
   .settings-button.danger {

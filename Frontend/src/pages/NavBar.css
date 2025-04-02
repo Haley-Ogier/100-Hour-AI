@@ -11,12 +11,12 @@
 .nav-left {
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
+  justify-content: flex-start;
 }
 
 .nav-left img {
-  max-width: 250px;
-  height: auto;
+  max-width: 225px;
+  margin-right: 1rem;
 }
 
 .nav-logo {
@@ -39,9 +39,9 @@
 }
 
 .nav-btn {
-  /* White background with a subtle border */
+  /* White background */
   background: #fff;
-  border: 1px solid #ecf0f1;
+  border: none; /* 1px solid #ecf0f1; */
   border-radius: 6px;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -51,8 +51,27 @@
   z-index: 100;
 }
 
-/* Hover: lighten the background or add a subtle transform */
+/* Hover: darken the background or add a subtle transform */
 .nav-btn:hover {
   background: #f0f6ff;
+  transform: scale(1.03);
+}
+
+.important-btn {
+  /* Orange background */
+  background: #e17055;
+  border: none; /*1px solid #ecf0f1;*/
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #ffffff;  /* dark text for contrast */
+  transition: background 0.2s, transform 0.2s;
+  z-index: 100;
+}
+
+/* Hover: darken the background or add a subtle transform */
+.important-btn:hover {
+  background: #d6654d;
   transform: scale(1.03);
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './SignUp.css';
-import NavBar from './NavBar';
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -21,7 +20,6 @@ export default function Signup() {
 
   return (
     <>
-            <NavBar />
     <div className="signup-page">
       <div className="signup-container">
         <h2>Create an Account</h2>
