@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
-import Logo from "../logo.svg"
+import Logo from "../images/Logo.svg"
 
 function NavBar() {
   return (
@@ -12,6 +12,9 @@ function NavBar() {
         </Link>
       </div>
       <div className="nav-right">
+      <Link to="/LandingPage" className="nav-btn">
+          Landing Page
+        </Link>
         <Link to="/Account" className="nav-btn">
           Profile
         </Link>
