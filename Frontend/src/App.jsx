@@ -5,6 +5,8 @@ import CreateTaskPage from "./pages/TaskCreate";
 import SignIn from "./pages/SignIn";
 import AISupport from "./pages/AISupport";
 import Account from "./pages/Account";
+import Signup from "./pages/SignUp";
+import LandingPage from "./pages/LandingPage";
 
 
 function App() {
@@ -12,7 +14,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/LandingPage" element={<LandingPage />} />
         <Route path="/create-task" element={<CreateTaskPage />} />
+        <Route path="/SignUp" element={<Signup />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/Support" element={<AISupport />} />
         <Route path="/Account" element={<Account />} />

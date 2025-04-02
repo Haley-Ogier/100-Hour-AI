@@ -17,20 +17,14 @@
     text-align: center;
     position: relative;
     overflow-x: hidden;
-    background: linear-gradient(
-      135deg,
-      #ffe6fa 0%,
-      #ffa3e2 40%,
-      #8f88ff 70%,
-      #abcff2 100%
-    );
+    background: linear-gradient(135deg, #81ecec, #74b9ff);
   }
   
   .account-title {
     font-size: 2.2rem;
     margin-bottom: 1rem;
-    color: #7329ac;
-    text-shadow: 2px 2px #fff;
+    color: #ffffff;
+    text-shadow: 2px 2px rgb(114, 114, 114);
     position: relative;
     z-index: 1;
   }
@@ -43,8 +37,8 @@
   .account-subtitle {
       font-size: 1.1rem;
       font-style: italic;
-      color: #6c4298;
-      text-shadow: 1px 1px #fff;
+      color: #ffffff;
+      text-shadow: 2px 2px rgb(114, 114, 114);
   }
   
   .account-content {
@@ -69,7 +63,7 @@
   .section-title {
       font-size: 1.5rem;
       margin-bottom: 1.5rem;
-      color: #7329ac;
+      color: #74b9ff;
       border-bottom: 2px solid #f1f1f1;
       padding-bottom: 0.5rem;
   }
@@ -90,7 +84,7 @@
   
   .detail-key {
       font-weight: 600;
-      color: #8f6baf;
+      color: #74b9ff;
   }
   
   .detail-value {
@@ -100,7 +94,7 @@
   .edit-profile-button {
       align-self: flex-end;
       padding: 0.5rem 1.5rem;
-      background: #8f88ff;
+      background: #74b9ff;
       color: white;
       border: none;
       border-radius: 5px;
@@ -110,7 +104,7 @@
   }
   
   .edit-profile-button:hover {
-      background: #7a72e6;
+      background: #2d96ff;
   }
   
   /* Account Settings */

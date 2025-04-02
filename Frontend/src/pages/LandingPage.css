@@ -1,0 +1,162 @@
+/* 1) Define brand color variables (using CSS custom properties) */
+:root {
+  --primary-dark-blue: #74b9ff;      /* “dark” brand blue */
+  --primary-light-blue: #81ecec;     /* lighter brand blue */
+  --accent-orange: #e17055;          /* accent color for CTAs/warnings */
+  --secondary-bg: #f8f9fa;           /* off-white background */
+  --text-dark: #2d3436;              /* dark gray text */
+  --text-light: #ffffff;             /* white text */
+  --primary-gradient: linear-gradient(135deg, #74b9ff, #81ecec);
+}
+
+/* 2) Basic reset & typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--secondary-bg);
+  color: var(--text-dark);
+  line-height: 1.6;
+  font-size: 16px; /* base font size */
+}
+
+.header {
+  background: var(--primary-gradient);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0rem 2rem 0rem 0rem; /* top=0, right=2rem, bottom=0, left=0 */
+  height: 80px;  
+}
+.video-container {
+  margin-top: 2rem; 
+  display: flex;
+  justify-content: center; /* horizontally center the video */
+}
+
+.video-container iframe {
+  max-width: 100%;
+}
+
+
+/* Logo + Title (left side) */
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo img {
+  height: 225px;
+  margin-right: 1rem;
+}
+
+.header-title {
+  font-size: 1.5rem; /* ~24px */
+  font-weight: bold;
+}
+
+/* 4) Hero Section */
+.hero {
+  /* White for strong contrast with gradient header */
+  background-color: #fff;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero h1 {
+  font-size: 2rem;    /* ~32px heading */
+  margin-bottom: 1rem;
+  color: var(--primary-dark-blue); /* brand color for heading */
+}
+
+.hero p {
+  font-size: 1rem;   /* ~16px body text */
+  max-width: 600px;
+  margin: 0 auto 2rem auto; /* center paragraph */
+  color: #555;
+}
+
+/* CTA button uses the accent color to stand out */
+.hero button {
+  background-color: var(--accent-orange);
+  color: var(--text-light);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.hero button:hover {
+  background-color: #d6654d; /* slightly darker shade of accent */
+}
+
+/* 5) Features Section */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #fff; /* or var(--secondary-bg) if you prefer an off-white */
+}
+
+.feature-card {
+  background-color: #f9f9f9; /* subtle contrast card background */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 250px;
+  text-align: center;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.feature-card img {
+  max-width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  margin-top: 0.5rem;
+  font-size: 1.2rem; /* ~19px */
+  color: var(--primary-dark-blue);
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 6) Footer with same gradient as header */
+.footer {
+  background: var(--primary-gradient);
+  color: var(--text-light);
+  text-align: center;
+  padding: 2rem;
+}
+
+.footer p {
+  font-size: 1rem;
+}
+.header-buttons button {
+  background-color: var(--accent-orange); /* or var(--primary-dark-blue) if you prefer */
+  color: #fff;
+  border: none;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.header-buttons button:hover {
+  background-color: #d6654d; 
+}

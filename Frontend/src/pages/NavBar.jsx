@@ -1,16 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
+import Logo from "../images/Logo.svg"
 
 function NavBar() {
   return (
     <header className="header-nav">
       <div className="nav-left">
-        <Link to="/" className="nav-logo">
-          100 Hour AI Coach
+        <Link to="/">
+        <img src={Logo} alt="100HourAILogo" />
         </Link>
       </div>
       <div className="nav-right">
+      <Link to="/LandingPage" className="nav-btn">
+          Landing Page
+        </Link>
         <Link to="/Account" className="nav-btn">
           Profile
         </Link>

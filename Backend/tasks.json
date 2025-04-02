@@ -21,6 +21,46 @@
     "deadline": "2025-04-01",
     "description": "dfdfjf",
     "type": "longTermGoal",
+    "completed": false
+  },
+  {
+    "id": 1743485669595,
+    "title": "new",
+    "deadline": "2025-04-03",
+    "description": "helper",
+    "type": "task",
+    "completed": true
+  },
+  {
+    "id": 1743487874920,
+    "title": "Test",
+    "deadline": "2025-04-01",
+    "description": "",
+    "type": "longTermGoal",
+    "completed": true
+  },
+  {
+    "id": 1743487941262,
+    "title": "added",
+    "deadline": "2025-04-18",
+    "description": "",
+    "type": "shortTermGoal",
+    "completed": false
+  },
+  {
+    "id": 1743488137058,
+    "title": "tester2",
+    "deadline": "2025-04-03",
+    "description": "",
+    "type": "task",
+    "completed": false
+  },
+  {
+    "id": 1743488228909,
+    "title": "last test",
+    "deadline": "2025-04-02",
+    "description": "",
+    "type": "task",
     "completed": true
   },
   {
