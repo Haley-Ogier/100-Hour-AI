@@ -28,7 +28,7 @@ const LandingPage = () => {
     gsap.from(".feature-card", {
       y: 100,
       opacity: 0,
-      duration: 1,
+      duration: 3,
       stagger: 0.2,
       ease: "power2.out"
     });
