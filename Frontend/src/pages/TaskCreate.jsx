@@ -118,22 +118,3 @@ function TaskCreate() {
 }
 
 export default TaskCreate;
-
-    
-    
-    /*
-    return(
-        <>
-            <NavBar />
-            <div className='task-create-page'>
-                <h1 className='task-create-title'>Create Tasks Here:</h1>
-                <div className='form-container'>
-                    <form className='task-create-form'>
-                        <input type="text" placeholder='Enter task here:' className="username-and-password" required />
-                    </form>
-                </div>
-                <button type="submit">Create task</button>
-            </div>
-        </>
-    );
-    */
