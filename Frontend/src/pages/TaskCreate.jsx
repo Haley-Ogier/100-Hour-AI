@@ -104,7 +104,7 @@ function TaskCreate() {
               </button>
               <button
                 type="button"
-                className="cancel-button"
+                className="submit-button"
                 onClick={() => navigate("/")}
               >
                 Cancel
