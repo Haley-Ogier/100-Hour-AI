@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Homepage.css";
 import Confetti from "react-confetti";
 import NavBar from "./NavBar";
@@ -11,14 +11,18 @@ function formatDate(dateString) {
   return dateObj.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric"
+    year: "numeric",
   });
 }
 
+/**
+ * Single item in the vertical timeline
+ */
 function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
   const [fadedIn, setFadedIn] = useState(false);
-  const itemRef = React.useRef(null);
+  const itemRef = useRef(null);
 
+  // ✨ fade‑in as the card scrolls into view
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -29,14 +33,9 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
       },
       { threshold: 0.1 }
     );
-    if (itemRef.current) {
-      observer.observe(itemRef.current);
-    }
-    return () => {
-      if (itemRef.current) {
-        observer.unobserve(itemRef.current);
-      }
-    };
+
+    if (itemRef.current) observer.observe(itemRef.current);
+    return () => itemRef.current && observer.unobserve(itemRef.current);
   }, []);
 
   const typeClass =
@@ -62,9 +61,7 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
             ? " ✅"
             : ""}
         </h3>
-        <span className="timeline-deadline">
-          Deadline: {formatDate(item.deadline)}
-        </span>
+        <span className="timeline-deadline">Deadline: {formatDate(item.deadline)}</span>
         <p className="timeline-description">{item.description}</p>
         <div className="complete-container">
           <label>
@@ -72,8 +69,8 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
               type="checkbox"
               checked={item.completed}
               onChange={() => onToggleCompleted(item)}
-            />{" "}
-            Mark Completed
+            />
+            {" "}Mark Completed
           </label>
         </div>
       </div>
@@ -81,6 +78,9 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
   );
 }
 
+/**
+ * -------- Main page --------
+ */
 export default function HomePage() {
   const [allTasks, setAllTasks] = useState([]);
   const [loadedItems, setLoadedItems] = useState([]);
@@ -88,12 +88,12 @@ export default function HomePage() {
   const [showCompleted, setShowCompleted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiProps, setConfettiProps] = useState({});
+  const [streak, setStreak] = useState(0);
 
-  useEffect(() => {
-    fetchAllTasksFromServer();
-  }, []);
-
-  const fetchAllTasksFromServer = async () => {
+  /* ------------------------------------------------------------------
+   * Data loaders
+   * ----------------------------------------------------------------*/
+  const fetchAllTasks = async () => {
     try {
       const res = await fetch(`${SERVER_URL}/api/tasks`);
       const data = await res.json();
@@ -106,6 +106,24 @@ export default function HomePage() {
     }
   };
 
+  const fetchStreak = async () => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/streak`);
+      const { streak } = await res.json();
+      setStreak(streak);
+    } catch (err) {
+      console.error("Failed to fetch streak:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllTasks();
+    fetchStreak();
+  }, []);
+
+  /* ------------------------------------------------------------------
+   * Infinite scroll
+   * ----------------------------------------------------------------*/
   const loadMoreItems = () => {
     const nextSlice = allTasks.slice(itemsCount, itemsCount + ITEMS_PER_BATCH);
     setLoadedItems((prev) => [...prev, ...nextSlice]);
@@ -114,19 +132,31 @@ export default function HomePage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition =
-        window.innerHeight + document.documentElement.scrollTop;
+      const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
       const threshold = document.documentElement.offsetHeight - 10;
       if (scrollPosition >= threshold && itemsCount < allTasks.length) {
         loadMoreItems();
       }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [itemsCount, allTasks]);
 
-  const handleExpandPast = () => {
-    setShowCompleted(!showCompleted);
+  /* ------------------------------------------------------------------
+   * Toggle completion + celebration + refresh streak
+   * ----------------------------------------------------------------*/
+  const triggerCelebration = (type) => {
+    const base = { origin: { y: 0.6 } };
+    if (type === "longTermGoal") {
+      setConfettiProps({ ...base, particleCount: 600, spread: 160 });
+    } else if (type === "shortTermGoal") {
+      setConfettiProps({ ...base, particleCount: 300, spread: 100 });
+    } else {
+      setConfettiProps({ ...base, particleCount: 100, spread: 70 });
+    }
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
   };
 
   const onToggleCompleted = async (item) => {
@@ -135,54 +165,22 @@ export default function HomePage() {
       const res = await fetch(`${SERVER_URL}/api/tasks/${item.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completed: newVal })
+        body: JSON.stringify({ completed: newVal }),
       });
       const updatedTask = await res.json();
-      setAllTasks((prev) =>
-        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
-      );
-      setLoadedItems((prev) =>
-        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
-      );
-      if (!item.completed && newVal) {
-        triggerCelebration(item.type);
-      }
+      setAllTasks((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
+      setLoadedItems((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
+
+      // 🎉 celebration + streak update
+      if (!item.completed && newVal) triggerCelebration(item.type);
+      await fetchStreak();
     } catch (err) {
       console.error("Failed to toggle completion:", err);
     }
   };
 
-  const triggerCelebration = (type) => {
-    if (type === "longTermGoal") {
-      setConfettiProps({
-        particleCount: 600,
-        spread: 160,
-        origin: { y: 0.6 }
-      });
-    } else if (type === "shortTermGoal") {
-      setConfettiProps({
-        particleCount: 300,
-        spread: 100,
-        origin: { y: 0.6 }
-      });
-    } else {
-      setConfettiProps({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    }
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
-  };
-
-  const visibleItems = loadedItems.filter(
-    (task) => showCompleted || !task.completed
-  );
-  const orientationMap = new Map();
-  visibleItems.forEach((task, index) => {
-    orientationMap.set(task.id, index % 2 === 0 ? "left" : "right");
-  });
+  /* ------------------------------------------------------------------ */
+// Fixed orientations based on original load order
 
   return (
     <>
@@ -197,34 +195,40 @@ export default function HomePage() {
             gravity={0.4}
           />
         )}
+
         <header className="hero-section">
           <h1 className="app-title">AI Coaching App</h1>
-          <p className="app-subtitle">
-            Gamify your goals, build habits, and leverage AI to reach the finish line.
-          </p>
+          <p className="app-subtitle">Gamify your goals, build habits, and leverage AI to reach the finish line.</p>
+          <p className="streak-banner">🔥 Current streak: {streak} day{streak !== 1 && "s"}</p>
         </header>
+
         <section className="timeline-section">
           <h2 className="timeline-heading">Upcoming Tasks & Deadlines</h2>
           <div className="expand-past-container">
-            <button className="expand-past-button" onClick={handleExpandPast}>
+            <button className="expand-past-button" onClick={() => setShowCompleted(!showCompleted)}>
               {showCompleted ? "Hide Past" : "Expand Past"}
             </button>
           </div>
+
           <div className="timeline">
-            {loadedItems.map((item) => {
-              const hidden = item.completed && !showCompleted;
-              const orientation = orientationMap.get(item.id) || "left";
-              return (
-                <TimelineItem
-                  key={item.id}
-                  item={item}
-                  orientation={orientation}
-                  hidden={hidden}
-                  onToggleCompleted={onToggleCompleted}
-                />
-              );
-            })}
+            {
+              loadedItems
+                .filter(item => showCompleted || !item.completed)
+                .map((item, index) => {
+                  const orientation = index % 2 === 0 ? "left" : "right";
+                  return (
+                    <TimelineItem
+                      key={item.id}
+                      item={item}
+                      orientation={orientation}
+                      hidden={false} // it's already filtered, so don't hide
+                      onToggleCompleted={onToggleCompleted}
+                    />
+                  );
+                })
+            }
           </div>
+
         </section>
       </div>
     </>

@@ -1,106 +1,38 @@
 [
   {
-    "id": 1743470350736,
-    "title": "he",
-    "deadline": "2025-04-03",
-    "description": "klds",
+    "id": 1745277533238,
+    "title": "First",
+    "deadline": "2025-04-26",
+    "description": "Make this work",
     "type": "task",
-    "completed": false
+    "completed": true,
+    "completedAt": "2025-04-21T23:26:27.641Z"
   },
   {
-    "id": 1743470365810,
-    "title": "two",
-    "deadline": "2025-04-03",
-    "description": "kdjs",
+    "id": 1745277657639,
+    "title": "Second",
+    "deadline": "2025-05-08",
+    "description": "Longer",
     "type": "shortTermGoal",
-    "completed": false
+    "completed": false,
+    "completedAt": null
   },
   {
-    "id": 1743470383246,
-    "title": "hjs",
-    "deadline": "2025-04-01",
-    "description": "dfdfjf",
-    "type": "longTermGoal",
-    "completed": false
-  },
-  {
-    "id": 1743485669595,
-    "title": "new",
-    "deadline": "2025-04-03",
-    "description": "helper",
+    "id": 1745277680182,
+    "title": "Third",
+    "deadline": "2025-04-22",
+    "description": "none",
     "type": "task",
-    "completed": true
+    "completed": true,
+    "completedAt": "2025-04-21T23:26:29.518Z"
   },
   {
-    "id": 1743487874920,
-    "title": "Test",
-    "deadline": "2025-04-01",
-    "description": "",
-    "type": "longTermGoal",
-    "completed": true
-  },
-  {
-    "id": 1743487941262,
-    "title": "added",
-    "deadline": "2025-04-18",
-    "description": "",
-    "type": "shortTermGoal",
-    "completed": false
-  },
-  {
-    "id": 1743488137058,
-    "title": "tester2",
-    "deadline": "2025-04-03",
-    "description": "",
+    "id": 1745277702460,
+    "title": "Fourth",
+    "deadline": "2025-05-08",
+    "description": "jfk",
     "type": "task",
-    "completed": false
-  },
-  {
-    "id": 1743488228909,
-    "title": "last test",
-    "deadline": "2025-04-02",
-    "description": "",
-    "type": "task",
-    "completed": true
-  },
-  {
-    "id": 1743485669595,
-    "title": "new",
-    "deadline": "2025-04-03",
-    "description": "helper",
-    "type": "task",
-    "completed": true
-  },
-  {
-    "id": 1743487874920,
-    "title": "Test",
-    "deadline": "2025-04-01",
-    "description": "",
-    "type": "longTermGoal",
-    "completed": true
-  },
-  {
-    "id": 1743487941262,
-    "title": "added",
-    "deadline": "2025-04-18",
-    "description": "",
-    "type": "shortTermGoal",
-    "completed": false
-  },
-  {
-    "id": 1743488137058,
-    "title": "tester2",
-    "deadline": "2025-04-03",
-    "description": "",
-    "type": "task",
-    "completed": false
-  },
-  {
-    "id": 1743488228909,
-    "title": "last test",
-    "deadline": "2025-04-02",
-    "description": "",
-    "type": "task",
-    "completed": true
+    "completed": false,
+    "completedAt": null
   }
 ]

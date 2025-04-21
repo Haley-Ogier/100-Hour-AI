@@ -7,21 +7,26 @@ import AISupport from "./pages/AISupport";
 import Account from "./pages/Account";
 import Signup from "./pages/SignUp";
 import LandingPage from "./pages/LandingPage";
-
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/LandingPage" element={<LandingPage />} />
-        <Route path="/create-task" element={<CreateTaskPage />} />
-        <Route path="/SignUp" element={<Signup />} />
-        <Route path="/SignIn" element={<SignIn />} />
-        <Route path="/Support" element={<AISupport />} />
-        <Route path="/Account" element={<Account />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/SignIn" element={<SignIn />} />
+          <Route path="/SignUp" element={<Signup />} />
+
+          {/* Protected Routes */}
+          <Route path="/create-task" element={<ProtectedRoute><CreateTaskPage /></ProtectedRoute>} />
+          <Route path="/Support" element={<ProtectedRoute><AISupport /></ProtectedRoute>} />
+          <Route path="/Account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/Home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

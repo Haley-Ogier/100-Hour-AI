@@ -31,7 +31,7 @@ function TaskCreate() {
       if (!res.ok) {
         throw new Error("Failed to create task");
       }
-      navigate("/");
+      navigate("/Home");
     } catch (err) {
       console.error("Error creating task:", err);
     }
@@ -105,7 +105,7 @@ function TaskCreate() {
               <button
                 type="button"
                 className="submit-button"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/Home")}
               >
                 Cancel
               </button>

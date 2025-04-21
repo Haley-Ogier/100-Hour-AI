@@ -1,24 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import './SignIn.css';
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from 'react-router-dom';
 
 function SignIn() {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
 
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-    });
-    
-    const handleChange = (e) => {
-        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
-    
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Signing in with:', formData);
-    };
+  const { signIn } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    return(
-        <>
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // For now this just simulates a successful login.
+    console.log('Signing in with:', formData);
+
+    // ✅ Mark the user as authenticated
+    signIn();
+
+    // ✅ Redirect to a protected route
+    navigate('/Home');
+  };
+
+  return (
     <div className="signin-page">
       <div className="signin-container">
         <h2>Sign In:</h2>
@@ -50,8 +61,7 @@ function SignIn() {
         </form>
       </div>
     </div>
-        </>
-    );
+  );
 }
 
-export default SignIn
+export default SignIn;

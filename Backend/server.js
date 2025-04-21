@@ -1,7 +1,3 @@
-/**
- * server.js
- * Run with: node server.js
- */
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -41,13 +37,37 @@ function saveTasksToFile(tasks) {
   }
 }
 
-// GET /api/tasks - return all tasks
 app.get("/api/tasks", (req, res) => {
   const tasks = loadTasksFromFile();
   res.json(tasks);
 });
 
-// POST /api/tasks - create a new task
+app.get("/api/streak", (req, res) => {
+  const tasks = loadTasksFromFile();
+
+  // Collect all calendar days on which **any** task was finished
+  const toLocalDate = iso =>
+    new Date(iso).toLocaleDateString("en-US", { timeZone: "America/New_York" });
+
+  const daysWithCompletions = new Set(
+    tasks
+      .filter(t => t.completed && t.completedAt)
+      .map(t => toLocalDate(t.completedAt))
+  );
+
+  const today = toLocalDate(new Date().toISOString());
+
+  // Walk backward from today until a gap appears
+  let streak = 0;
+  let cursor = new Date();                      // JS Date is mutable
+  while (daysWithCompletions.has(toLocalDate(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  res.json({ streak });
+});
+
+
 app.post("/api/tasks", (req, res) => {
   const tasks = loadTasksFromFile();
 
@@ -58,7 +78,6 @@ app.post("/api/tasks", (req, res) => {
     title,
     deadline,
     description,
-    // user-provided or default to "task"
     type: type || "task",
     completed: !!completed
   };
@@ -69,23 +88,28 @@ app.post("/api/tasks", (req, res) => {
   res.status(201).json(newTask);
 });
 
-// PATCH /api/tasks/:id - update a task by id
 app.patch("/api/tasks/:id", (req, res) => {
-  const tasks = loadTasksFromFile();
-  const taskId = parseInt(req.params.id, 10);
+  const tasks   = loadTasksFromFile();
+  const taskId  = Number(req.params.id);
+  const updates = req.body;             // e.g. { completed: true }
 
-  const updatedFields = req.body; // e.g. { completed: true }
+  const idx = tasks.findIndex(t => t.id === taskId);
+  if (idx === -1) return res.status(404).json({ error: "Task not found" });
 
-  const idx = tasks.findIndex((t) => t.id === taskId);
-  if (idx === -1) {
-    return res.status(404).json({ error: "Task not found" });
+  if (updates.completed === true && !tasks[idx].completed) {
+    const now = new Date().toISOString();
+    updates.completedAt = now;          // NEW FIELD
+  }
+  if (updates.completed === false) {
+    updates.completedAt = null;
   }
 
-  tasks[idx] = { ...tasks[idx], ...updatedFields };
+  tasks[idx] = { ...tasks[idx], ...updates };
   saveTasksToFile(tasks);
 
   res.json(tasks[idx]);
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);

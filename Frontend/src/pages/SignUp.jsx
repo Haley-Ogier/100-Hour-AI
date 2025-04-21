@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './SignUp.css';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -9,17 +11,31 @@ export default function Signup() {
     confirmPassword: '',
   });
 
+  const { signIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     console.log('Signing up with:', formData);
+
+    // ✅ Simulate successful signup
+    signIn(); // Mark user as signed in
+
+    navigate('/Home'); // Redirect to home
   };
 
   return (
-    <>
     <div className="signup-page">
       <div className="signup-container">
         <h2>Create an Account</h2>
@@ -70,11 +86,12 @@ export default function Signup() {
               required 
             />
           </div>
+
+          {error && <p className="error-message">{error}</p>}
           
           <button type="submit" className="signup-btn">Sign Up</button>
         </form>
       </div>
     </div>
-    </>
   );
 }
