@@ -70,6 +70,21 @@
     transform: scale(1.03);
   }
   
+  .timeline-item.past-due {
+    border-left: 6px solid #e74c3c;               /* thick red stripe */
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);  /* soft glow */
+    animation: pulse-red 1s ease-in-out infinite alternate;
+  }
+  
+  @keyframes pulse-red {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-4px);                /* tiny wiggle */
+    }
+  }
+  
   .new-task-form-container {
     margin: 1rem auto;
     padding: 1rem;

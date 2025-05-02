@@ -6,7 +6,7 @@
     "description": "Make this work",
     "type": "task",
     "completed": true,
-    "completedAt": "2025-04-21T23:26:27.641Z"
+    "completedAt": "2025-05-02T20:52:25.378Z"
   },
   {
     "id": 1745277657639,
@@ -14,8 +14,8 @@
     "deadline": "2025-05-08",
     "description": "Longer",
     "type": "shortTermGoal",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-02T21:12:29.522Z"
   },
   {
     "id": 1745277680182,
@@ -24,7 +24,7 @@
     "description": "none",
     "type": "task",
     "completed": true,
-    "completedAt": "2025-04-21T23:26:29.518Z"
+    "completedAt": "2025-05-02T20:57:17.247Z"
   },
   {
     "id": 1745277702460,
@@ -34,5 +34,18 @@
     "type": "task",
     "completed": false,
     "completedAt": null
+  },
+  {
+    "id": 1746217935345,
+    "title": "New Task",
+    "deadline": "2025-05-16",
+    "description": "this is the new update",
+    "type": "task",
+    "mode": "medium",
+    "deposit": 40,
+    "depositPaid": true,
+    "createdAt": "2025-05-02T20:32:15.346Z",
+    "completed": true,
+    "completedAt": "2025-05-02T20:32:19.553Z"
   }
 ]
