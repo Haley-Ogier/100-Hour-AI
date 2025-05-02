@@ -5,8 +5,8 @@
     "deadline": "2025-04-26",
     "description": "Make this work",
     "type": "task",
-    "completed": true,
-    "completedAt": "2025-05-02T20:52:25.378Z"
+    "completed": false,
+    "completedAt": null
   },
   {
     "id": 1745277657639,
@@ -14,8 +14,8 @@
     "deadline": "2025-05-08",
     "description": "Longer",
     "type": "shortTermGoal",
-    "completed": true,
-    "completedAt": "2025-05-02T21:12:29.522Z"
+    "completed": false,
+    "completedAt": null
   },
   {
     "id": 1745277680182,
@@ -23,8 +23,8 @@
     "deadline": "2025-04-22",
     "description": "none",
     "type": "task",
-    "completed": true,
-    "completedAt": "2025-05-02T20:57:17.247Z"
+    "completed": false,
+    "completedAt": null
   },
   {
     "id": 1745277702460,

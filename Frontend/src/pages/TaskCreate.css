@@ -35,8 +35,13 @@ body {
   padding: 1rem 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 20px;
+
+  max-width: 600px;   
+  margin: 0 auto;     /* centers the whole form block */
 }
 
 .form-container {
@@ -56,10 +61,18 @@ body {
 }
 
 .form-grid {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 15px;
-    align-items: center;
+  display: grid;
+  grid-template-columns: max-content 1fr;  /* label col auto-width */
+  gap: 15px;
+  align-items: center;
+
+  justify-content: center;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;     /* center the buttons */
+  gap: 1rem;
 }
 
 .question-column {
@@ -78,13 +91,13 @@ body {
 }
 
 .submit-button {
-    margin-top: 20px;
-    padding: 20px 40px;
-    background-color: #74b9ff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  padding: 0.6rem 1.5rem;      
+  font-size: 1rem;
+  background-color: #74b9ff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .submit-button:hover {

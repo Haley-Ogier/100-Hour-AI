@@ -178,8 +178,8 @@ function TaskCreate() {
               )}
             </div>
 
-            {/* ---- Actions ----------------------------------------------- */}
-            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+            {/* ---- Actions -------------------------------------------------- */}
+            <div className="form-actions">
               <button type="submit" className="submit-button">
                 Create task
               </button>
