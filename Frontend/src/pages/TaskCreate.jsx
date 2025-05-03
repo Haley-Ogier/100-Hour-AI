@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./TaskCreate.css";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
@@ -9,13 +9,57 @@ function TaskCreate() {
   /* -------------------------------------------------------------
    * form state
    * ----------------------------------------------------------- */
-  const [title, setTitle]         = useState("");
-  const [deadline, setDeadline]   = useState("");
-  const [description, setDesc]    = useState("");
-  const [type, setType]           = useState("task");
+  const [title, setTitle]       = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [description, setDesc]  = useState("");
+  const [type, setType]         = useState("task");
+  const [mode, setMode]         = useState("easy");  // Easy/Medium/Hard
+  const [deposit, setDeposit]   = useState("");
+  /* -------------------------------------------------------------
+   * AI suggestion state
+   * ----------------------------------------------------------- */
+  const [aiSuggestions, setAiSuggestions] = useState("");
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-  const [mode, setMode]           = useState("easy");     // Easy/Medium/Hard
-  const [deposit, setDeposit]     = useState("");         // string keeps <input> happy
+  /* -------------------------------------------------------------
+   * handleTitleChange
+   * - calls AI after user types, for demonstration
+   * ----------------------------------------------------------- */
+  async function handleTitleChange(e) {
+    const userInput = e.target.value;
+    setTitle(userInput);
+  
+    if (!userInput || userInput.length < 3) {
+      setAiSuggestions("");
+      return;
+    }
+  
+    try {
+      setLoadingSuggestions(true);
+  
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `User typed this partial task title: "${userInput}". Suggest a refined or more descriptive task title.`
+        }),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Failed to fetch AI suggestions");
+      }
+  
+      const data = await res.json();
+      // Suppose the server returns { result: "some AI text" }
+      setAiSuggestions(data.result || "");
+    } catch (error) {
+      console.error("AI suggestion error:", error);
+      setAiSuggestions("❌ Error getting suggestions from AI.");
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  }
+  
 
   /* -------------------------------------------------------------
    * submit handler
@@ -23,13 +67,11 @@ function TaskCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    /* basic required fields */
     if (!title || !deadline) {
       alert("Please provide a TITLE and DEADLINE.");
       return;
     }
 
-    /* extra validation for accountability modes */
     if (["medium", "hard"].includes(mode)) {
       if (!deposit || Number(deposit) <= 0) {
         alert("Enter a positive deposit for Medium/Hard mode.");
@@ -48,17 +90,17 @@ function TaskCreate() {
           type,
           mode,
           deposit: deposit ? Number(deposit) : null,
-          completed: false
-        })
+          completed: false,
+        }),
       });
 
       if (!res.ok) {
-        /* try to surface server-side validation / payment errors */
         const msg = await res.json().catch(() => null);
         throw new Error(msg?.error || "Failed to create task");
       }
 
-      navigate("/Home");        // success 🎉
+      // success
+      navigate("/Home");
     } catch (err) {
       alert(err.message);
       console.error("Error creating task:", err);
@@ -89,7 +131,7 @@ function TaskCreate() {
                   type="text"
                   required
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={handleTitleChange} // <== updated!
                 />
               </div>
 
@@ -149,7 +191,7 @@ function TaskCreate() {
                   value={mode}
                   onChange={(e) => {
                     setMode(e.target.value);
-                    setDeposit("");  // reset deposit when switching back to Easy
+                    setDeposit("");
                   }}
                 >
                   <option value="easy">Easy (no deposit)</option>
@@ -191,6 +233,19 @@ function TaskCreate() {
                 Cancel
               </button>
             </div>
+
+            {/* ---- AI SUGGESTIONS SECTION ------------------------------------- */}
+            <div className="ai-suggestions-box">
+              {loadingSuggestions && <p>AI is thinking…</p>}
+
+              {/* If we have suggestions, show them in a “bubble” style */}
+              {aiSuggestions && (
+                <div className="ai-suggestion-bubble">
+                  <strong>AI Suggestion:</strong> {aiSuggestions}
+                </div>
+              )}
+            </div>
+            {/* ----------------------------------------------------------------- */}
           </form>
         </div>
       </div>
