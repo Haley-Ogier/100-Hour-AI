@@ -31,6 +31,23 @@ export default function AISupport() {
     setCurrentId(newId);
   }
 
+  // New function to delete a chat
+  function deleteChat(chatId) {
+    // Filter out the chat to be deleted
+    const updated = conversations.filter(c => c.id !== chatId);
+
+    // Persist changes
+    persist(updated);
+
+    // If the deleted chat was the currently selected chat, reset currentId
+    if (chatId === currentId && updated.length > 0) {
+      setCurrentId(updated[0].id);
+    } else if (updated.length === 0) {
+      // No chats left
+      setCurrentId(null);
+    }
+  }
+
   /* ---------- send prompt ---------- */
   async function handleSubmit(e) {
     e.preventDefault();
@@ -111,9 +128,18 @@ export default function AISupport() {
               <li
                 key={c.id}
                 className={c.id === currentId ? 'active' : ''}
-                onClick={() => setCurrentId(c.id)}
               >
-                {c.title}
+                {/* When you click on chat title, set it as currentId */}
+                <span onClick={() => setCurrentId(c.id)}>
+                  {c.title}
+                </span>
+                {/* Delete button */}
+                <button
+                  className="delete-chat-btn"
+                  onClick={() => deleteChat(c.id)}
+                >
+                  ✕
+                </button>
               </li>
             ))}
           </ul>

@@ -5,8 +5,8 @@
     "deadline": "2025-04-26",
     "description": "Make this work",
     "type": "task",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-03T20:20:53.021Z"
   },
   {
     "id": 1745277657639,
@@ -14,8 +14,8 @@
     "deadline": "2025-05-08",
     "description": "Longer",
     "type": "shortTermGoal",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-03T20:20:53.820Z"
   },
   {
     "id": 1745277680182,
@@ -23,8 +23,8 @@
     "deadline": "2025-04-22",
     "description": "none",
     "type": "task",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-03T20:20:52.094Z"
   },
   {
     "id": 1745277702460,
@@ -32,8 +32,8 @@
     "deadline": "2025-05-08",
     "description": "jfk",
     "type": "task",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-03T20:20:54.316Z"
   },
   {
     "id": 1746217935345,
