@@ -47,5 +47,44 @@
     "createdAt": "2025-05-02T20:32:15.346Z",
     "completed": true,
     "completedAt": "2025-05-02T20:32:19.553Z"
+  },
+  {
+    "id": 1746729627341,
+    "title": "Finish History Essay",
+    "deadline": "2025-05-14",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-08T18:40:27.341Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746729642687,
+    "title": "Complete coding project",
+    "deadline": "2025-05-15",
+    "description": "",
+    "type": "task",
+    "mode": "medium",
+    "deposit": 20,
+    "depositPaid": true,
+    "createdAt": "2025-05-08T18:40:42.687Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746729655382,
+    "title": "Finish History Essay",
+    "deadline": "2025-05-15",
+    "description": "",
+    "type": "task",
+    "mode": "hard",
+    "deposit": 100,
+    "depositPaid": true,
+    "createdAt": "2025-05-08T18:40:55.382Z",
+    "completed": false,
+    "completedAt": null
   }
 ]
