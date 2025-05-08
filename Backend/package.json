@@ -15,7 +15,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+<<<<<<< Updated upstream
     "mongoose": "^8.14.1",
     "stripe": "^18.1.0"
+=======
+    "mongoose": "^8.14.1"
+>>>>>>> Stashed changes
   }
 }

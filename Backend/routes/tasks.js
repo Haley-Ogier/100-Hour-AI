@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Task = require("../models/Task");
+<<<<<<< Updated upstream
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+=======
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+>>>>>>> Stashed changes
 
 // Create new task
 router.post("/tasks", async (req, res) => {

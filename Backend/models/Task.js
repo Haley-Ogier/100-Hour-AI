@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
@@ -51,3 +52,22 @@ const taskSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Task", taskSchema);
+=======
+const mongoose = require('mongoose');
+
+const taskSchema = new mongoose.Schema({
+    id: { type: Number, required: true },
+    title: { type: String, required: true },
+    deadline: { type: Date, required: true },
+    description: { type: String },
+    type: { type: String, required: true, default: "task" },
+    mode: { type: String, required: true, default: "easy" },
+    deposit: { type: Number, default: null },
+    depositPaid: { type: Boolean, default: false },
+    createdAt: { type: Date },
+    completed: { type: Boolean, default: false },
+    completedAt: { type: Date, default: null }
+});
+
+module.exports = mongoose.model('Task', taskSchema);
+>>>>>>> Stashed changes
