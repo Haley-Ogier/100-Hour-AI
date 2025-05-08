@@ -3,30 +3,51 @@ import './SignIn.css';
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 
+const SERVER_URL = "http://localhost:4000";
+
 function SignIn() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
 
   const { signIn } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // For now this just simulates a successful login.
-    console.log('Signing in with:', formData);
+    // Checks the database for an account with the entered username and password
+    try {
+      const res = await fetch(`${SERVER_URL}/api/account`);
+      const data = await res.json();
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].username == formData.username && data[i].password == formData.password) {
+          // For now this just simulates a successful login.
+          console.log('Signing in with:', formData);
 
-    // ✅ Mark the user as authenticated
-    signIn();
+          // ✅ Mark the user as authenticated
+          signIn();
 
-    // ✅ Redirect to a protected route
-    navigate('/Home');
+          // ✅ Redirect to a protected route
+          navigate('/Home');
+        }
+
+      }
+
+      // If entered information isn't tied to an account or is incorrect
+      setError("Username and/or password is incorrect");
+      return
+
+    } catch (err) {
+      alert(err.message);
+      console.error("Error logging in:", err);
+    }
   };
 
   return (
@@ -56,6 +77,8 @@ function SignIn() {
               required 
             />
           </div>
+
+          {error && <p className="error-message">{error}</p>}
           
           <button type="submit" className="signin-btn">Sign In</button>
         </form>

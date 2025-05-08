@@ -20,11 +20,33 @@ const generateRoute = require('./routes/generate');
 console.log('typeof generateRoute →', typeof generateRoute);
 app.use('/api/generate', generateRoute);   // now req.body is defined
 
+/* ---------- account “database” ---------- */
+const ACC_FILE = path.join(__dirname, 'accounts.json');
+
 /* ---------- tasks “database” helpers ---------- */
 const DB_FILE = path.join(__dirname, 'tasks.json');
 
 /* ---------- streak “database” ---------- */
 const STREAK_FILE = path.join(__dirname, 'streak.json');
+
+function loadAccountFromFile() {
+  try {
+    if (!fs.existsSync(ACC_FILE)) return [];
+    const data = fs.readFileSync(ACC_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Failed to read account file', err);
+    return [];
+  }
+}
+
+function saveAccountToFile(accountObj) {
+  try {
+    fs.writeFileSync(ACC_FILE, JSON.stringify(accountObj, null, 2));
+  } catch (err) {
+    console.error('Failed to write account fie', err);
+  }
+}
 
 function loadStreak() {
   try {
@@ -77,6 +99,11 @@ function saveTasksToFile(tasks) {
   }
 }
 
+app.get("/api/account", (req, res) => {
+  const accounts = loadAccountFromFile();
+  res.json(accounts);
+});
+
 app.get("/api/tasks", (req, res) => {
   const tasks = loadTasksFromFile();
   res.json(tasks);
@@ -103,6 +130,26 @@ app.get('/api/streak', (req, res) => {
   });
 });
 
+app.post('/api/account', (req, res) => {
+  const account = loadAccountFromFile();
+  const {
+        username,
+        email,
+        password,
+    } = req.body;
+
+    if (!username || !email || !password)
+      return res.status(400).json({ error: 'username, email, & password required' });
+    
+    const newAcc = {
+      username,
+      email,
+      password
+    };
+    account.push(newAcc);
+    saveAccountToFile(account);
+    res.status(201).json(newAcc);
+});
 
 app.post('/api/tasks', (req, res) => {
   const tasks = loadTasksFromFile();
