@@ -13,5 +13,17 @@
     "username": "Test3",
     "email": "Chris@rotondo.me",
     "password": "T3sting."
+  },
+  {
+    "username": "Test4",
+    "email": "Test@email.com",
+    "password": "Blah4Blah+",
+    "createdAt": "2025-05-08T16:27:24.731Z"
+  },
+  {
+    "username": "Test5",
+    "email": "Test@email.com",
+    "password": "Testing99.",
+    "createdAt": "2025-05-08T16:35:52.507Z"
   }
 ]

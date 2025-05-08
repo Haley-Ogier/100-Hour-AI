@@ -3,6 +3,8 @@ import './SignUp.css';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+const SERVER_URL = "http://localhost:4000";
+
 export default function Signup() {
   const [formData, setFormData] = useState({
     username: '',
@@ -91,9 +93,26 @@ export default function Signup() {
       return;
     }
 
-    // Attempt to create an account and add it to the database
+    // Check that an account isn't already using the username or password
     try {
-      const res = await fetch("http://localhost:4000/api/account", {
+      const res = await fetch(`${SERVER_URL}/api/account`);
+      const data = await res.json();
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].username == formData.username || data[i].password == formData.password) {
+          setError("Username and/or password is already taken!");
+          return;
+        }
+
+      }
+
+    } catch (err) {
+      alert(err.message);
+      console.error("Error logging in:", err);
+    }
+
+    // Create an account and add it to the database
+    try {
+      const res = await fetch(`${SERVER_URL}/api/account`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

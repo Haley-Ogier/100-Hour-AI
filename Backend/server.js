@@ -144,7 +144,8 @@ app.post('/api/account', (req, res) => {
     const newAcc = {
       username,
       email,
-      password
+      password,
+      createdAt: new Date().toISOString(),
     };
     account.push(newAcc);
     saveAccountToFile(account);
