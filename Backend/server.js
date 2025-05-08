@@ -145,6 +145,7 @@ app.post('/api/account', (req, res) => {
       username,
       email,
       password,
+      tagline: "Here is my tagline",
       createdAt: new Date().toISOString(),
     };
     account.push(newAcc);

@@ -39,6 +39,7 @@ export default function Signup() {
     if (!formData.email.endsWith(".com") &&
         !formData.email.endsWith(".edu") &&
         !formData.email.endsWith(".org") &&
+        !formData.email.endsWith(".gov") &&
         !formData.email.endsWith(".me")) {
       setError("Not a valid email");
       return

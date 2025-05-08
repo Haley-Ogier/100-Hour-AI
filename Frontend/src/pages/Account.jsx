@@ -3,6 +3,7 @@ import './Account.css';
 import NavBar from './NavBar';
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const SERVER_URL = "http://localhost:4000";
 
@@ -24,10 +25,11 @@ function formatDate(dateString) {
 
 function Account() {
 
-    const { isAuthenticated, curAccount } = useContext(AuthContext);
+    const { curAccount, signOut } = useContext(AuthContext);
 
     const [username, setUsername] = useState("");
     const [email, setEmail]       = useState("");
+    const [tagline, setTagline]   = useState("");
     const [joinDate, setJoinDate] = useState("");
 
     const fetchAcc = async () => {
@@ -38,6 +40,7 @@ function Account() {
               if (data[i].username == curAccount) {
                 setUsername(data[i].username);
                 setEmail(data[i].email);
+                setTagline(data[i].tagline);
                 setJoinDate(formatDate(data[i].createdAt));
               }
             }
@@ -57,7 +60,7 @@ function Account() {
             <div className='account-page'>
                 <div className="account-header">
                     <h1 className='account-title'>Welcome, {username}!</h1>
-                    <p className="account-subtitle">{sampleData.tagline}</p>
+                    <p className="account-subtitle">{tagline}</p>
                 </div>
 
                 <div className="account-content">
@@ -89,10 +92,10 @@ function Account() {
                             <button className="settings-button">
                                 Preferences
                             </button>
-                            <button className="settings-button">
+                            <button className="settings-button" onClick={signOut}>
                                 Logout
                             </button>
-                            <button className="settings-button danger">
+                            <button className="settings-button danger" onClick={signOut}>
                                 Delete Account
                             </button>
                         </div>
