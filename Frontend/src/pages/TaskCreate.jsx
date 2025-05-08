@@ -11,10 +11,11 @@ function TaskCreate() {
    * ----------------------------------------------------------- */
   const [title, setTitle]       = useState("");
   const [deadline, setDeadline] = useState("");
-  const [description, setDesc]  = useState("");
+  const [description, setDescription]  = useState("");
   const [type, setType]         = useState("task");
   const [mode, setMode]         = useState("easy");  // Easy/Medium/Hard
   const [deposit, setDeposit]   = useState("");
+  const [processingDeposit, setProcessingDeposit] = useState(false);
   /* -------------------------------------------------------------
    * AI suggestion state
    * ----------------------------------------------------------- */
@@ -60,6 +61,29 @@ function TaskCreate() {
     }
   }
   
+  async function processDeposit(amt, mode) {
+    try {
+      setProcessingDeposit(true);
+      const res = await fetch("/api/tasks/process-deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amt, mode })
+      });
+
+      if (!res.ok) {
+        const e = await res.json();
+        throw new Error(e.error || "Payment processing failed");
+      }
+
+      return await res.json();
+    } catch (err) {
+      alert(err.message);
+      console.error("Error making deposit: ", err);
+    } finally {
+      setProcessingDeposit(false);
+    }
+  }
+  
 
   /* -------------------------------------------------------------
    * submit handler
@@ -80,9 +104,18 @@ function TaskCreate() {
     }
 
     try {
+      let payment = null;
+
+      if (["medium", "hard"].includes(mode)) {
+        payment = await processDeposit(Number(deposit), mode);
+      }
+      
       const res = await fetch("http://localhost:4000/api/tasks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}` // Add this
+  },
         body: JSON.stringify({
           title,
           deadline,
@@ -90,6 +123,7 @@ function TaskCreate() {
           type,
           mode,
           deposit: deposit ? Number(deposit) : null,
+          paymentID: payment?.paymentID,
           completed: false,
         }),
       });
@@ -204,7 +238,7 @@ function TaskCreate() {
               {["medium", "hard"].includes(mode) && (
                 <>
                   <div className="question-column">
-                    <label htmlFor="deposit">Deposit&nbsp;($):</label>
+                    <label htmlFor="deposit">Deposit ($):</label>
                   </div>
                   <div className="input-column">
                     <input
@@ -222,8 +256,8 @@ function TaskCreate() {
 
             {/* ---- Actions -------------------------------------------------- */}
             <div className="form-actions">
-              <button type="submit" className="submit-button">
-                Create task
+              <button type="submit" className="submit-button" disabled={processingDeposit} >
+                {processingDeposit ? "Processing deposit..." : "Create task"}
               </button>
               <button
                 type="button"

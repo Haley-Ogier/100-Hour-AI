@@ -20,6 +20,10 @@ const generateRoute = require('./routes/generate');
 console.log('typeof generateRoute →', typeof generateRoute);
 app.use('/api/generate', generateRoute);   // now req.body is defined
 
+/* ---------- task route ---------- */
+const tasksRoute = require('./routes/tasks');  // Make sure path is correct
+app.use('/api', tasksRoute);  // This will handle all /api/tasks routes
+
 /* ---------- tasks “database” helpers ---------- */
 const DB_FILE = path.join(__dirname, 'tasks.json');
 
