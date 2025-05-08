@@ -70,4 +70,11 @@
     background: #2d96ff; 
     transform: scale(1.02);
   }
+
+  .requirements {
+    display: block;
+    margin-top: 0rem;
+    margin-bottom: 1.0rem;
+    color: #2d3436;
+  }
   
