@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import './TaskCreate.css';
-import NavBar from './NavBar';
+import React, { useState, useEffect } from "react";
+import "./TaskCreate.css";
+import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
 
 function TaskCreate() {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
+
+  /* -------------------------------------------------------------
+   * form state
+   * ----------------------------------------------------------- */
+  const [title, setTitle]       = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription]  = useState("");
   const [type, setType]         = useState("task");
@@ -56,7 +60,7 @@ function TaskCreate() {
       setLoadingSuggestions(false);
     }
   }
-
+  
   async function processDeposit(amt, mode) {
     try {
       setProcessingDeposit(true);
@@ -86,10 +90,19 @@ function TaskCreate() {
    * ----------------------------------------------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!title || !deadline) {
-      alert("Please provide a title and deadline!");
+      alert("Please provide a TITLE and DEADLINE.");
       return;
     }
+
+    if (["medium", "hard"].includes(mode)) {
+      if (!deposit || Number(deposit) <= 0) {
+        alert("Enter a positive deposit for Medium/Hard mode.");
+        return;
+      }
+    }
+
     try {
       let payment = null;
 
@@ -114,49 +127,64 @@ function TaskCreate() {
           completed: false,
         }),
       });
+
       if (!res.ok) {
-        throw new Error("Failed to create task");
+        const msg = await res.json().catch(() => null);
+        throw new Error(msg?.error || "Failed to create task");
       }
+
+      // success
       navigate("/Home");
     } catch (err) {
+      alert(err.message);
       console.error("Error creating task:", err);
     }
   };
 
+  /* -------------------------------------------------------------
+   * component
+   * ----------------------------------------------------------- */
   return (
     <>
       <NavBar />
+
       <div className="task-create-page">
         <h1 className="task-create-title">Create Tasks Here:</h1>
+
         <div className="questions-container">
           <form className="task-create-form" onSubmit={handleSubmit}>
             <div className="form-grid">
+              {/* ---- Title ------------------------------------------------ */}
               <div className="question-column">
                 <label htmlFor="title">Title:</label>
               </div>
               <div className="input-column">
                 <input
-                  type="text"
                   id="title"
                   className="input-field"
+                  type="text"
                   required
                   value={title}
-                  onChange={handleTitleChange}
+                  onChange={handleTitleChange} // <== updated!
                 />
               </div>
+
+              {/* ---- Deadline --------------------------------------------- */}
               <div className="question-column">
                 <label htmlFor="deadline">Deadline:</label>
               </div>
               <div className="input-column">
                 <input
-                  type="date"
                   id="deadline"
                   className="input-field"
+                  type="date"
                   required
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
                 />
               </div>
+
+              {/* ---- Description ------------------------------------------ */}
               <div className="question-column">
                 <label htmlFor="description">Description:</label>
               </div>
@@ -165,9 +193,11 @@ function TaskCreate() {
                   id="description"
                   className="input-field"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => setDesc(e.target.value)}
                 />
               </div>
+
+              {/* ---- Type -------------------------------------------------- */}
               <div className="question-column">
                 <label htmlFor="type">Type:</label>
               </div>
@@ -237,8 +267,9 @@ function TaskCreate() {
                 Cancel
               </button>
             </div>
-             {/* ---- AI SUGGESTIONS SECTION ------------------------------------- */}
-             <div className="ai-suggestions-box">
+
+            {/* ---- AI SUGGESTIONS SECTION ------------------------------------- */}
+            <div className="ai-suggestions-box">
               {loadingSuggestions && <p>AI is thinking…</p>}
 
               {/* If we have suggestions, show them in a “bubble” style */}

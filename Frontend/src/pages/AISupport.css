@@ -176,3 +176,55 @@ body, html {
   background: rgb(0 0 0 / 0.08);
 }
 
+/* 1. Make each list item use flex to space title & delete button */
+.chat-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background: rgb(255 255 255 / 0.1);
+  /* You can keep 'cursor: pointer;' if the entire row is clickable.
+     Alternatively, you can remove it if only the title area should be clickable. */
+  cursor: pointer;
+}
+
+.chat-list li.active,
+.chat-list li:hover {
+  background: rgb(0 0 0 / 0.08);
+}
+
+/* 2. Circular “X” button */
+.delete-chat-btn {
+  /* Basic reset */
+  border: none;
+  outline: none;
+  background: #d9534f;
+
+  /* Circle shape */
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  /* Center the X or ✕ */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Text & size */
+  color: #fff;
+  font-size: 0.9rem; /* adjust to taste */
+  line-height: 1;
+
+  /* Spacing & cursor */
+  margin-left: 8px;  /* gap between title and button */
+  cursor: pointer;
+
+  /* Smooth hover transition */
+  transition: background-color 0.3s ease;
+}
+
+.delete-chat-btn:hover {
+  background-color: #c9302c;
+}

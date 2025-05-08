@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 const SERVER_URL = "http://localhost:4000";
 const ITEMS_PER_BATCH = 3;
 
+
 function formatDate(dateString) {
   const dateObj = new Date(dateString);
   return dateObj.toLocaleDateString("en-US", {
@@ -21,8 +22,8 @@ function formatDate(dateString) {
 function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
   const [fadedIn, setFadedIn] = useState(false);
   const itemRef = useRef(null);
-
-  // ✨ fade‑in as the card scrolls into view
+  const isPastDue = !item.completed && new Date(item.deadline) < new Date();
+  // fade‑in as the card scrolls into view
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -45,12 +46,11 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
       ? "long-term-goal"
       : "regular-task";
 
+  
   return (
     <div
       ref={itemRef}
-      className={`timeline-item ${orientation} fade-in ${
-        fadedIn ? "show" : ""
-      } ${hidden ? "hidden" : ""} ${typeClass}`}
+      className={`timeline-item ${orientation} fade-in ${fadedIn ? 'show' : ''} ${hidden ? 'hidden' : ''} ${typeClass} ${isPastDue ? 'past-due' : ''}`}
     >
       <div className="timeline-content">
         <h3 className="timeline-title">
@@ -60,6 +60,7 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
             : item.type === "shortTermGoal"
             ? " ✅"
             : ""}
+            {isPastDue && " ⚠️"}
         </h3>
         <span className="timeline-deadline">Deadline: {formatDate(item.deadline)}</span>
         <p className="timeline-description">{item.description}</p>
@@ -88,7 +89,8 @@ export default function HomePage() {
   const [showCompleted, setShowCompleted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiProps, setConfettiProps] = useState({});
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(0);     // current streak
+  const [best,   setBest]   = useState(0);
 
   /* ------------------------------------------------------------------
    * Data loaders
@@ -109,8 +111,9 @@ export default function HomePage() {
   const fetchStreak = async () => {
     try {
       const res = await fetch(`${SERVER_URL}/api/streak`);
-      const { streak } = await res.json();
-      setStreak(streak);
+      const { streak, bestStreak } = await res.json();
+      setStreak(streak ?? 0);
+      setBest(bestStreak ?? 0);
     } catch (err) {
       console.error("Failed to fetch streak:", err);
     }
@@ -180,7 +183,6 @@ export default function HomePage() {
   };
 
   /* ------------------------------------------------------------------ */
-// Fixed orientations based on original load order
 
   return (
     <>
@@ -190,7 +192,7 @@ export default function HomePage() {
           <Confetti
             width={window.innerWidth}
             height={window.innerHeight}
-            numberOfPieces={confettiProps.particleCount || 200}
+            numberOfPieces={confettiProps.particleCount || 500}
             recycle={false}
             gravity={0.4}
           />
@@ -199,7 +201,11 @@ export default function HomePage() {
         <header className="hero-section">
           <h1 className="app-title">AI Coaching App</h1>
           <p className="app-subtitle">Gamify your goals, build habits, and leverage AI to reach the finish line.</p>
-          <p className="streak-banner">🔥 Current streak: {streak} day{streak !== 1 && "s"}</p>
+          <p className="streak-banner">
+            🔥 Current streak:&nbsp;{streak}&nbsp;day{streak !== 1 && "s"}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            🏆 Best:&nbsp;{best}
+          </p>
         </header>
 
         <section className="timeline-section">
