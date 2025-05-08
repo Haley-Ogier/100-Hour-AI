@@ -1,6 +1,7 @@
 [
   {
     "id": 1745277533238,
+    "username": "Test",
     "title": "First",
     "deadline": "2025-04-26",
     "description": "Make this work",
@@ -10,15 +11,17 @@
   },
   {
     "id": 1745277657639,
+    "username": "Test2",
     "title": "Second",
     "deadline": "2025-05-08",
     "description": "Longer",
     "type": "shortTermGoal",
     "completed": true,
-    "completedAt": "2025-05-08T04:12:15.951Z"
+    "completedAt": "2025-05-08T21:00:56.698Z"
   },
   {
     "id": 1745277680182,
+    "username": "Test3",
     "title": "Third",
     "deadline": "2025-04-22",
     "description": "none",
@@ -28,6 +31,7 @@
   },
   {
     "id": 1745277702460,
+    "username": "Test4",
     "title": "Fourth",
     "deadline": "2025-05-08",
     "description": "jfk",
@@ -37,6 +41,7 @@
   },
   {
     "id": 1746217935345,
+    "username": "Test5",
     "title": "New Task",
     "deadline": "2025-05-16",
     "description": "this is the new update",
@@ -50,6 +55,7 @@
   },
   {
     "id": 1746729627341,
+    "username": "Test6",
     "title": "Finish History Essay",
     "deadline": "2025-05-14",
     "description": "",
@@ -63,6 +69,7 @@
   },
   {
     "id": 1746729642687,
+    "username": "Test7",
     "title": "Complete coding project",
     "deadline": "2025-05-15",
     "description": "",
@@ -76,6 +83,7 @@
   },
   {
     "id": 1746729655382,
+    "username": "Test",
     "title": "Finish History Essay",
     "deadline": "2025-05-15",
     "description": "",
@@ -84,6 +92,62 @@
     "deposit": 100,
     "depositPaid": true,
     "createdAt": "2025-05-08T18:40:55.382Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746730891802,
+    "username": "Test2",
+    "title": "ChrisTestingTask",
+    "deadline": "2025-05-09",
+    "description": "Test",
+    "type": "longTermGoal",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-08T19:01:31.802Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746731339618,
+    "username": "Test3",
+    "title": "Create a Study Plan and Review Test Materials for Upcoming Exam",
+    "deadline": "2025-05-09",
+    "description": "",
+    "type": "longTermGoal",
+    "mode": "medium",
+    "deposit": 1,
+    "depositPaid": true,
+    "createdAt": "2025-05-08T19:08:59.618Z",
+    "completed": true,
+    "completedAt": "2025-05-08T19:09:06.149Z"
+  },
+  {
+    "id": 1746737293231,
+    "username": "Test7",
+    "title": "TieTaskToAccount",
+    "deadline": "2025-06-07",
+    "description": "Test",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-08T20:48:13.231Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746738018318,
+    "username": "Test7",
+    "title": "TestTaskFiltering",
+    "deadline": "2025-05-31",
+    "description": "This task should only appear when logged in with this account",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-08T21:00:18.318Z",
     "completed": false,
     "completedAt": null
   }

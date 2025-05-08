@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Homepage.css";
 import Confetti from "react-confetti";
 import NavBar from "./NavBar";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 const SERVER_URL = "http://localhost:4000";
 const ITEMS_PER_BATCH = 3;
@@ -83,6 +85,8 @@ function TimelineItem({ item, orientation, hidden, onToggleCompleted }) {
  * -------- Main page --------
  */
 export default function HomePage() {
+  const { curAccount } = useContext(AuthContext);
+
   const [allTasks, setAllTasks] = useState([]);
   const [loadedItems, setLoadedItems] = useState([]);
   const [itemsCount, setItemsCount] = useState(0);
@@ -100,8 +104,9 @@ export default function HomePage() {
       const res = await fetch(`${SERVER_URL}/api/tasks`);
       const data = await res.json();
       data.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-      setAllTasks(data);
-      setLoadedItems(data.slice(0, ITEMS_PER_BATCH));
+      const filteredData = data.filter((a) => a.username === curAccount);
+      setAllTasks(filteredData);
+      setLoadedItems(filteredData.slice(0, ITEMS_PER_BATCH));
       setItemsCount(ITEMS_PER_BATCH);
     } catch (err) {
       console.error("Failed to fetch tasks:", err);

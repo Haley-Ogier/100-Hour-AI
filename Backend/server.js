@@ -156,6 +156,7 @@ app.post('/api/account', (req, res) => {
 app.post('/api/tasks', (req, res) => {
   const tasks = loadTasksFromFile();
   const {
+        username,
         title,
         deadline,
         description,
@@ -187,6 +188,7 @@ app.post('/api/tasks', (req, res) => {
   
   const newTask = {
     id: Date.now(),
+    username,
     title,
     deadline,
     description,
