@@ -7,9 +7,83 @@ function TaskCreate() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("task");
+  const [description, setDescription]  = useState("");
+  const [type, setType]         = useState("task");
+  const [mode, setMode]         = useState("easy");  // Easy/Medium/Hard
+  const [deposit, setDeposit]   = useState("");
+  const [processingDeposit, setProcessingDeposit] = useState(false);
+  /* -------------------------------------------------------------
+   * AI suggestion state
+   * ----------------------------------------------------------- */
+  const [aiSuggestions, setAiSuggestions] = useState("");
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
+  /* -------------------------------------------------------------
+   * handleTitleChange
+   * - calls AI after user types, for demonstration
+   * ----------------------------------------------------------- */
+  async function handleTitleChange(e) {
+    const userInput = e.target.value;
+    setTitle(userInput);
+  
+    if (!userInput || userInput.length < 3) {
+      setAiSuggestions("");
+      return;
+    }
+  
+    try {
+      setLoadingSuggestions(true);
+  
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `User typed this partial task title: "${userInput}". Suggest a refined or more descriptive task title.`
+        }),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Failed to fetch AI suggestions");
+      }
+  
+      const data = await res.json();
+      // Suppose the server returns { result: "some AI text" }
+      setAiSuggestions(data.result || "");
+    } catch (error) {
+      console.error("AI suggestion error:", error);
+      setAiSuggestions("❌ Error getting suggestions from AI.");
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  }
+
+  async function processDeposit(amt, mode) {
+    try {
+      setProcessingDeposit(true);
+      const res = await fetch("/api/tasks/process-deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amt, mode })
+      });
+
+      if (!res.ok) {
+        const e = await res.json();
+        throw new Error(e.error || "Payment processing failed");
+      }
+
+      return await res.json();
+    } catch (err) {
+      alert(err.message);
+      console.error("Error making deposit: ", err);
+    } finally {
+      setProcessingDeposit(false);
+    }
+  }
+  
+
+  /* -------------------------------------------------------------
+   * submit handler
+   * ----------------------------------------------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !deadline) {
@@ -17,16 +91,28 @@ function TaskCreate() {
       return;
     }
     try {
+      let payment = null;
+
+      if (["medium", "hard"].includes(mode)) {
+        payment = await processDeposit(Number(deposit), mode);
+      }
+      
       const res = await fetch("http://localhost:4000/api/tasks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}` // Add this
+  },
         body: JSON.stringify({
           title,
           deadline,
           description,
           type,
-          completed: false
-        })
+          mode,
+          deposit: deposit ? Number(deposit) : null,
+          paymentID: payment?.paymentID,
+          completed: false,
+        }),
       });
       if (!res.ok) {
         throw new Error("Failed to create task");
@@ -55,7 +141,7 @@ function TaskCreate() {
                   className="input-field"
                   required
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={handleTitleChange}
                 />
               </div>
               <div className="question-column">
@@ -97,10 +183,51 @@ function TaskCreate() {
                   <option value="longTermGoal">Long-Term Goal</option>
                 </select>
               </div>
+
+              {/* ---- Accountability mode ---------------------------------- */}
+              <div className="question-column">
+                <label htmlFor="mode">Accountability:</label>
+              </div>
+              <div className="input-column">
+                <select
+                  id="mode"
+                  className="input-field"
+                  value={mode}
+                  onChange={(e) => {
+                    setMode(e.target.value);
+                    setDeposit("");
+                  }}
+                >
+                  <option value="easy">Easy (no deposit)</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+
+              {/* ---- Deposit – only for Medium/Hard ----------------------- */}
+              {["medium", "hard"].includes(mode) && (
+                <>
+                  <div className="question-column">
+                    <label htmlFor="deposit">Deposit ($):</label>
+                  </div>
+                  <div className="input-column">
+                    <input
+                      id="deposit"
+                      className="input-field"
+                      type="number"
+                      min="1"
+                      value={deposit}
+                      onChange={(e) => setDeposit(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
             </div>
-            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-              <button type="submit" className="submit-button">
-                Create task
+
+            {/* ---- Actions -------------------------------------------------- */}
+            <div className="form-actions">
+              <button type="submit" className="submit-button" disabled={processingDeposit} >
+                {processingDeposit ? "Processing deposit..." : "Create task"}
               </button>
               <button
                 type="button"
@@ -110,6 +237,18 @@ function TaskCreate() {
                 Cancel
               </button>
             </div>
+             {/* ---- AI SUGGESTIONS SECTION ------------------------------------- */}
+             <div className="ai-suggestions-box">
+              {loadingSuggestions && <p>AI is thinking…</p>}
+
+              {/* If we have suggestions, show them in a “bubble” style */}
+              {aiSuggestions && (
+                <div className="ai-suggestion-bubble">
+                  <strong>AI Suggestion:</strong> {aiSuggestions}
+                </div>
+              )}
+            </div>
+            {/* ----------------------------------------------------------------- */}
           </form>
         </div>
       </div>
