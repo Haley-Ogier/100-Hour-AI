@@ -130,7 +130,7 @@ export default function Signup() {
       console.log('Signing up with:', formData);
 
       // ✅ Simulate successful signup
-      signIn(); // Mark user as signed in
+      signIn(formData.username); // Mark user as signed in
 
       navigate('/Home'); // Redirect to home
 

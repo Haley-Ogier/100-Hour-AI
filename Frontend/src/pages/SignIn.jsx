@@ -32,7 +32,7 @@ function SignIn() {
           console.log('Signing in with:', formData);
 
           // ✅ Mark the user as authenticated
-          signIn();
+          signIn(formData.username);
 
           // ✅ Redirect to a protected route
           navigate('/Home');
