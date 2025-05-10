@@ -5,6 +5,7 @@ import CreateTaskPage from "./pages/TaskCreate";
 import SignIn from "./pages/SignIn";
 import AISupport from "./pages/AISupport";
 import Account from "./pages/Account";
+import NewPassword from "./pages/NewPassword";
 import Signup from "./pages/SignUp";
 import LandingPage from "./pages/LandingPage";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/create-task" element={<ProtectedRoute><CreateTaskPage /></ProtectedRoute>} />
           <Route path="/Support" element={<ProtectedRoute><AISupport /></ProtectedRoute>} />
           <Route path="/Account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/NewPassword" element={<ProtectedRoute><NewPassword /></ProtectedRoute>} />
           <Route path="/Home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         </Routes>
       </Router>
