@@ -7,12 +7,12 @@ import { useNavigate } from 'react-router-dom';
 
 const SERVER_URL = "http://localhost:4000";
 
-const sampleData = {
-    username: "Username",
-    email: "username@example.com",
-    joinDate: "January 1, 2025",
-    tagline: "Here is my tagline"
-};
+// const sampleData = {
+//      username: "Username",
+//      email: "username@example.com",
+//      joinDate: "January 1, 2025",
+//      tagline: "Here is my tagline"
+// };
 
 function formatDate(dateString) {
     const dateObj = new Date(dateString);
@@ -24,6 +24,8 @@ function formatDate(dateString) {
   }
 
 function Account() {
+
+    const navigate = useNavigate();
 
     const { curAccount, signOut } = useContext(AuthContext);
 
@@ -53,6 +55,10 @@ function Account() {
     useEffect(() => {
         fetchAcc();
     }, []);
+
+    const handlePassword = (e) => {
+        navigate('/NewPassword');
+    }
 
     return (
         <>
@@ -86,7 +92,7 @@ function Account() {
                     <section className="account-section settings-section">
                         <h2 className="section-title">Account Settings</h2>
                         <div className="settings-options">
-                            <button className="settings-button">
+                            <button className="settings-button" onClick={handlePassword}>
                                 Change Password
                             </button>
                             <button className="settings-button">

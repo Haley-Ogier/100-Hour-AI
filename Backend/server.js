@@ -29,7 +29,7 @@ const DB_FILE = path.join(__dirname, 'tasks.json');
 /* ---------- streak “database” ---------- */
 const STREAK_FILE = path.join(__dirname, 'streak.json');
 
-function loadAccountFromFile() {
+function loadAccountsFromFile() {
   try {
     if (!fs.existsSync(ACC_FILE)) return [];
     const data = fs.readFileSync(ACC_FILE, 'utf8');
@@ -40,7 +40,7 @@ function loadAccountFromFile() {
   }
 }
 
-function saveAccountToFile(accountObj) {
+function saveAccountsToFile(accountObj) {
   try {
     fs.writeFileSync(ACC_FILE, JSON.stringify(accountObj, null, 2));
   } catch (err) {
@@ -100,7 +100,7 @@ function saveTasksToFile(tasks) {
 }
 
 app.get("/api/account", (req, res) => {
-  const accounts = loadAccountFromFile();
+  const accounts = loadAccountsFromFile();
   res.json(accounts);
 });
 
@@ -131,7 +131,7 @@ app.get('/api/streak', (req, res) => {
 });
 
 app.post('/api/account', (req, res) => {
-  const account = loadAccountFromFile();
+  const account = loadAccountsFromFile();
   const {
         username,
         email,
@@ -149,7 +149,7 @@ app.post('/api/account', (req, res) => {
       createdAt: new Date().toISOString(),
     };
     account.push(newAcc);
-    saveAccountToFile(account);
+    saveAccountsToFile(account);
     res.status(201).json(newAcc);
 });
 
@@ -203,6 +203,26 @@ app.post('/api/tasks', (req, res) => {
   tasks.push(newTask);
   saveTasksToFile(tasks);
   res.status(201).json(newTask);
+});
+
+app.patch("/api/account/:id", (req, res) => {
+  const accounts   = loadAccountsFromFile();
+  const accountid  = req.body.username;
+  const updates = req.body.password;                    // e.g. { password: newPassword }
+
+  /* ---------- find account ---------- */
+  const idx = accounts.findIndex(t => t.username === accountid);
+  if (idx === -1) return res.status(404).json({ error: "Account not found" });
+
+  /* ---------- change password ------- */
+
+  accounts[idx].password = updates;
+
+  /* ---------- persist task update ---------- */
+  
+  saveAccountsToFile(accounts);
+
+  res.json(accounts[idx]);
 });
 
 app.patch("/api/tasks/:id", (req, res) => {
