@@ -11,24 +11,8 @@
     "userid": "1746913878451",
     "username": "Test2",
     "email": "Test2@email.com",
-    "password": "Testing2,",
+    "password": "Test1234!",
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T21:51:18.451Z"
-  },
-  {
-    "userid": "1746919730780",
-    "username": "Test3",
-    "email": "Test3@email.com",
-    "password": "Test12345!",
-    "tagline": "Here is my tagline",
-    "createdAt": "2025-05-10T23:28:50.780Z"
-  },
-  {
-    "userid": "1746919778316",
-    "username": "Test4",
-    "email": "Test4@email.com",
-    "password": "Testing1!",
-    "tagline": "Here is my tagline",
-    "createdAt": "2025-05-10T23:29:38.316Z"
   }
 ]

@@ -285,6 +285,32 @@ app.patch("/api/tasks/:id", (req, res) => {
   res.json(tasks[idx]);
 });
 
+app.delete("/api/tasks/:id", (req, res) => {
+  const tasks = loadTasksFromFile();
+  const user  = req.body.userid;
+
+  const filteredData = tasks.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveTasksToFile(filteredData);
+
+  res.json(filteredData);
+
+});
+
+app.delete("/api/account/:id", (req, res) => {
+  const accounts = loadAccountsFromFile();
+  const user  = req.body.userid;
+
+  const filteredData = accounts.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveAccountsToFile(filteredData);
+
+  res.json(filteredData);
+
+});
+
 
 
 if (require.main === module) {
