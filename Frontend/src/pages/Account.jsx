@@ -64,6 +64,49 @@ function Account() {
         navigate('/EditAccount');
     }
 
+    const handleDelete = async () => {
+        if (window.confirm("Are you sure you want to delete your account?") == true) {
+            // ---- Delete all tasks tied to account ---- //
+            try {
+                const res = await fetch(`${SERVER_URL}/api/tasks/${curAccount}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        userid: curAccount
+                    }),
+                });
+                if (!res.ok) {
+                    const msg = await res.json().catch(() => null);
+                    throw new Error(msg?.error || "Failed to remove all tasks");
+                }
+            } catch(err) {
+                alert(err.message);
+                console.error("Error deleting tasks:", err);
+            }
+            try {
+                const res = await fetch(`${SERVER_URL}/api/account/${curAccount}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        userid: curAccount
+                    }),
+                });
+                if (!res.ok) {
+                    const msg = await res.json().catch(() => null);
+                    throw new Error(msg?.error || "Failed to remove account");
+                }
+            } catch(err) {
+                alert(err.message);
+                console.error("Error deleting account:", err);
+            }
+
+            signOut();
+        }
+        else {
+            // Nothing Happens
+        }
+    }
+
     return (
         <>
             <NavBar />
@@ -105,7 +148,7 @@ function Account() {
                             <button className="settings-button" onClick={signOut}>
                                 Logout
                             </button>
-                            <button className="settings-button danger" onClick={signOut}>
+                            <button className="settings-button danger" onClick={handleDelete}>
                                 Delete Account
                             </button>
                         </div>

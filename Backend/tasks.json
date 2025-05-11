@@ -234,19 +234,5 @@
     "createdAt": "2025-05-10T22:14:15.401Z",
     "completed": false,
     "completedAt": null
-  },
-  {
-    "id": 1746919795207,
-    "userid": "1746919778316",
-    "title": "TestOnAccount4",
-    "deadline": "2025-06-05",
-    "description": "",
-    "type": "task",
-    "mode": "easy",
-    "deposit": null,
-    "depositPaid": false,
-    "createdAt": "2025-05-10T23:29:55.207Z",
-    "completed": false,
-    "completedAt": null
   }
 ]
