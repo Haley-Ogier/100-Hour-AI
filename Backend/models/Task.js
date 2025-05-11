@@ -1,53 +1,89 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const taskSchema = new mongoose.Schema({
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
+const TaskSchema = new mongoose.Schema({
+  userid: {
+    type: String,
+    required: true,
+    trim: true
   },
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   deadline: {
     type: Date,
     required: true
   },
   description: {
-    type: String
+    type: String,
+    trim: true,
+    default: ''
   },
   type: {
     type: String,
-    enum: ["task", "shortTermGoal", "longTermGoal"],
-    default: "task"
+    enum: ['task', 'shortTermGoal', 'longTermGoal'],
+    default: 'task'
   },
   mode: {
     type: String,
-    enum: ["easy", "medium", "hard"],
-    default: "easy"
+    enum: ['easy', 'medium', 'hard'],
+    default: 'easy'
   },
   deposit: {
     type: Number,
-    default: 0,
+    default: null,
     min: 0
-  },
-  depositPaid: {
-    type: Boolean,
-    default: false
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   },
   completed: {
     type: Boolean,
     default: false
   },
-  completedAt: {
+  cancelled: {
+    type: Boolean,
+    default: false
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['none', 'paid', 'refunded', 'forfeited'],
+    default: 'none'
+  },
+  createdAt: {
     type: Date,
-    default: null
+    default: Date.now
+  },
+  completedAt: {
+    type: Date
+  },
+  cancelledAt: {
+    type: Date
   }
+}, {
+  versionKey: false // Disable the version key (__v)
 });
 
-module.exports = mongoose.model("Task", taskSchema);
+// Indexes for better query performance
+TaskSchema.index({ userid: 1 });
+TaskSchema.index({ deadline: 1 });
+TaskSchema.index({ completed: 1 });
+TaskSchema.index({ paymentStatus: 1 });
+
+// Virtual property for task status
+TaskSchema.virtual('status').get(function() {
+  if (this.completed) return 'completed';
+  if (this.cancelled) return 'cancelled';
+  if (this.deadline < new Date()) return 'overdue';
+  return 'active';
+});
+
+// Middleware to validate deposit based on mode
+TaskSchema.pre('save', function(next) {
+  if (this.mode === 'easy' && this.deposit !== null) {
+    this.deposit = null; // Force no deposit for easy mode
+  } else if (['medium', 'hard'].includes(this.mode) && (this.deposit === null || this.deposit <= 0)) {
+    throw new Error('Deposit required for medium/hard mode');
+  }
+  next();
+});
+
+module.exports = mongoose.model('Task', TaskSchema);

@@ -1,124 +1,201 @@
-// routes/tasks.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Task = require("../models/Task");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const Task = require('../models/Task');
+const Account = require('../models/Account');
 
-// Create a new task
-router.post("/", async (req, res) => {
+// Create a new task with payment processing
+router.post('/', async (req, res) => {
   try {
-    const task = new Task(req.body);
-    await task.save();
-    res.status(201).json(task);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+    const { userid, title, deadline, description, type, mode, deposit, completed } = req.body;
 
-// Process deposit
-router.post("/process-deposit", async (req, res) => {
-  try {
-    const { amount, mode } = req.body;
-    
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount * 100, // Convert to cents
-      currency: "usd",
-      metadata: { mode },
-      description: `Task deposit (${mode} mode)`
-    });
-
-    res.json({
-      success: true,
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-      amount: amount
-    });
-  } catch (error) {
-    console.error("Deposit error:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: "Payment processing failed" 
-    });
-  }
-});
-
-// Complete a task (with refund if applicable)
-router.post("/complete-task/:id", async (req, res) => {
-  try {
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ error: "Task not found" });
-
-    // Process refund for Medium/Hard mode
-    if (task.mode !== "easy" && task.paymentIntentId) {
-      await stripe.refunds.create({
-        payment_intent: task.paymentIntentId,
-        metadata: { reason: "task_completed" }
-      });
+    // Validate required fields
+    if (!title || !deadline) {
+      return res.status(400).json({ error: 'Title and deadline are required' });
     }
 
-    task.completed = true;
-    await task.save();
+    // Validate deposit for medium/hard mode
+    if (['medium', 'hard'].includes(mode)) {
+      if (!deposit || isNaN(deposit) || deposit <= 0) {
+        return res.status(400).json({ error: 'Positive deposit required for medium/hard mode' });
+      }
+    }
+
+    // Create the task
+    const newTask = new Task({
+      userid,
+      title,
+      deadline: new Date(deadline),
+      description,
+      type,
+      mode,
+      deposit: mode !== 'easy' ? Number(deposit) : null,
+      completed: completed || false,
+      paymentStatus: mode !== 'easy' ? 'paid' : 'none',
+      createdAt: new Date()
+    });
+
+    // Save the task
+    const savedTask = await newTask.save();
+
+    res.status(201).json(savedTask);
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ error: 'Failed to create task' });
+  }
+});
+
+// Process payment for task deposit
+router.post('/payment', async (req, res) => {
+  try {
+    console.log(req.body)
+    const { userid, amount } = req.body;
+
+    // Validate input
+    if (!userid || amount === undefined) {
+      return res.status(400).json({ error: 'Username and amount are required' });
+    }
+
+    // Find the user's account
+    const account = await Account.findOne({ userid });
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    // Check if it's a deposit (positive amount) or refund (negative amount)
+    if (amount > 0) {
+      // For deposits, check sufficient balance
+      if (account.balance < amount) {
+        return res.status(400).json({ error: 'Insufficient balance' });
+      }
+      account.balance -= amount;
+    } else {
+      // For refunds, add the amount back
+      account.balance += Math.abs(amount);
+    }
+
+    // Create transaction record
+    const transaction = {
+      amount: Math.abs(amount),
+      type: amount > 0 ? 'deposit' : 'refund',
+      description: description || 'Task deposit',
+      date: new Date()
+    };
+
+    account.transactions = account.transactions || [];
+    account.transactions.push(transaction);
+
+    // Save the updated account
+    await account.save();
 
     res.json({ 
       success: true,
-      message: "Task completed successfully" + 
-        (task.mode !== "easy" ? " with full deposit refund" : "")
+      newBalance: account.balance,
+      transaction
     });
   } catch (error) {
-    console.error("Completion error:", error);
-    res.status(500).json({ error: error.message });
+    console.error('Payment processing error:', error);
+    res.status(500).json({ error: 'Payment processing failed' });
   }
 });
 
-// Forfeit a task (with partial refund for Medium)
-router.post("/forfeit-task/:id", async (req, res) => {
+// Update task status (completion or cancellation)
+router.put('/:id/status', async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ error: "Task not found" });
+    const { id } = req.params;
+    const { completed, cancelled } = req.body;
 
-    let message = "Task forfeited";
-    
-    // Process partial refund for Medium mode
-    if (task.mode === "medium" && task.paymentIntentId) {
-      await stripe.refunds.create({
-        payment_intent: task.paymentIntentId,
-        amount: Math.floor(task.deposit * 100 * 0.5), // 50% refund
-        metadata: { reason: "task_forfeited_medium" }
-      });
-      message += ". 50% of your deposit has been refunded.";
-    } else if (task.mode === "hard") {
-      message += ". No refund was issued for Hard mode.";
+    // Find the task
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
     }
 
-    await Task.findByIdAndDelete(req.params.id);
+    // Handle completed task
+    if (completed) {
+      task.completed = true;
+      task.completedAt = new Date();
+      
+      // Refund deposit if applicable
+      if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
+        task.paymentStatus = 'refunded';
+        await processRefund(task.userid, task.deposit, `Refund for completed task: ${task.title}`);
+      }
+    }
 
-    res.json({ 
-      success: true,
-      message
-    });
+    // Handle cancelled task
+    if (cancelled) {
+      task.cancelled = true;
+      task.cancelledAt = new Date();
+      
+      // Handle deposit based on mode
+      if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
+        if (task.mode === 'medium') {
+          // Medium mode gets refund
+          await processRefund(task.userid, task.deposit, `Refund for cancelled task: ${task.title}`);
+          task.paymentStatus = 'refunded';
+        } else if (task.mode === 'hard') {
+          // Hard mode forfeits deposit
+          task.paymentStatus = 'forfeited';
+          // Optionally transfer to admin or charity account
+        }
+      }
+    }
+
+    const updatedTask = await task.save();
+    res.json(updatedTask);
   } catch (error) {
-    console.error("Forfeit error:", error);
-    res.status(500).json({ error: error.message });
+    console.error('Error updating task status:', error);
+    res.status(500).json({ error: 'Failed to update task status' });
   }
 });
 
-// Refund payment (if task creation fails after payment)
-router.post("/refund-payment", async (req, res) => {
+// Helper function to process refunds
+async function processRefund(userid, amount, description) {
   try {
-    const { paymentIntentId, amount } = req.body;
-    
-    await stripe.refunds.create({
-      payment_intent: paymentIntentId,
-      amount: amount ? Math.floor(amount * 100) : undefined
-    });
+    const account = await Account.findOne({ userid });
+    if (!account) return false;
 
-    res.json({ success: true });
+    account.balance += amount;
+    
+    const transaction = {
+      amount,
+      type: 'refund',
+      description,
+      date: new Date()
+    };
+
+    account.transactions.push(transaction);
+    await account.save();
+    return true;
   } catch (error) {
-    console.error("Refund error:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: "Refund failed" 
-    });
+    console.error('Refund processing error:', error);
+    return false;
+  }
+}
+
+// Get all tasks for a user
+router.get('/user/:userid', async (req, res) => {
+  try {
+    const tasks = await Task.find({ userid: req.params.userid })
+      .sort({ createdAt: -1 });
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error fetching user tasks:', error);
+    res.status(500).json({ error: 'Failed to fetch tasks' });
+  }
+});
+
+// Get a single task by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.json(task);
+  } catch (error) {
+    console.error('Error fetching task:', error);
+    res.status(500).json({ error: 'Failed to fetch task' });
   }
 });
 
