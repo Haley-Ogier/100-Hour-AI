@@ -22,8 +22,9 @@ function TaskCreate() {
   const [type, setType] = useState("task");
   const [mode, setMode] = useState("easy");
   const [deposit, setDeposit] = useState("");
-  const [balance, setBalance] = useState(100);
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [balance, setBalance] = useState(100);  // Faking balance for testing
+  // const [balance, setBalance] = useState(0);
+  const [processingPayment, setProcessingPayment] = useState(false);
   
   /* -------------------------------------------------------------
    * AI suggestion state
@@ -38,7 +39,7 @@ function TaskCreate() {
     try {
       const res = await fetch(`${SERVER_URL}/api/account`);
       const data = await res.json();
-      for (var i = 0; i < data.length; i++) {
+      for (let i=0; i<data.length; ++i) {
         if (data[i].userid === curAccount) {
           setId(data[i].userid);
           setName(data[i].username);
@@ -58,7 +59,7 @@ function TaskCreate() {
    * ----------------------------------------------------------- */
   const processPayment = async (amount) => {
     try {
-      setPaymentProcessing(true);
+      setProcessingPayment(true);
 
       const res = await fetch(`${SERVER_URL}/api/payment`, {
         method: "POST",
@@ -71,18 +72,18 @@ function TaskCreate() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Payment failed");
+        const errData = await res.json();
+        throw new Error(errData.message || "Payment failed");
       }
 
       const data = await res.json();
       setBalance(data.newBalance);
       return true;
-    } catch (error) {
-      alert(`Payment error: ${error.message}`);
+    } catch (err) {
+      alert(`Payment error: ${err.message}`);
       return false;
     } finally {
-      setPaymentProcessing(false);
+      setProcessingPayment(false);
     }
   };
 
@@ -112,8 +113,8 @@ function TaskCreate() {
       if (!res.ok) throw new Error("Failed to fetch AI suggestions");
       const data = await res.json();
       setAiSuggestions(data.result || "");
-    } catch (error) {
-      console.error("AI suggestion error:", error);
+    } catch (err) {
+      console.error("AI suggestion error:", err);
       setAiSuggestions("❌ Error getting suggestions from AI.");
     } finally {
       setLoadingSuggestions(false);
@@ -305,9 +306,9 @@ function TaskCreate() {
               <button 
                 type="submit" 
                 className="submit-button"
-                disabled={paymentProcessing}
+                disabled={processingPayment}
               >
-                {paymentProcessing ? "Processing..." : "Create task"}
+                {processingPayment ? "Processing..." : "Create task"}
               </button>
               <button
                 type="button"

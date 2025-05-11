@@ -36,31 +36,25 @@
     "username": "abc520",
     "email": "abc@example.edu",
     "password": "o238nBKoqla#U&c",
-    "balance": 20,
+    "balance": 50,
     "transactions": [
       {
         "amount": 10,
         "type": "deposit",
-        "description": "Task deposit: Finish first two paragraphs of nutrition reflection paper by 5/18",
-        "date": "2025-05-11T17:14:00.064Z"
+        "description": "Task deposit: Finish first two paragraphs of nutrition reflection paper by 5/19",
+        "date": "2025-05-11T17:35:38.631Z"
       },
       {
         "amount": 10,
         "type": "deposit",
-        "description": "Task deposit: write physics notesheet for exam",
-        "date": "2025-05-11T17:16:18.053Z"
-      },
-      {
-        "amount": 10,
-        "type": "deposit",
-        "description": "Task deposit: Finish History Essay",
-        "date": "2025-05-11T17:17:57.765Z"
+        "description": "Task deposit: Complete and Organize Chemistry Notes for Thermodynamics",
+        "date": "2025-05-11T17:36:11.153Z"
       },
       {
         "amount": 30,
         "type": "deposit",
-        "description": "Task deposit: Read 50 pages of stats textbook",
-        "date": "2025-05-11T17:19:17.799Z"
+        "description": "Task deposit: Write and Submit a 10-Page APA-Style Research Paper on Cognitive Psychology by May 16",
+        "date": "2025-05-11T17:36:58.865Z"
       }
     ],
     "tagline": "Here is my tagline",
