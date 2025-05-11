@@ -22,7 +22,7 @@ function TaskCreate() {
   const [type, setType] = useState("task");
   const [mode, setMode] = useState("easy");
   const [deposit, setDeposit] = useState("");
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(100);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   
   /* -------------------------------------------------------------
@@ -42,7 +42,7 @@ function TaskCreate() {
         if (data[i].userid === curAccount) {
           setId(data[i].userid);
           setName(data[i].username);
-          setBalance(100);
+          setBalance(data[i].balance || 0);
         }
       }
     } catch (err) {
@@ -51,9 +51,7 @@ function TaskCreate() {
     }
   };
 
-  useEffect(() => {
-    fetchAcc();
-  }, []);
+  useEffect(() => { fetchAcc(); });
 
   /* -------------------------------------------------------------
    * Process payment for the deposit
@@ -61,13 +59,14 @@ function TaskCreate() {
   const processPayment = async (amount) => {
     try {
       setPaymentProcessing(true);
+
       const res = await fetch(`${SERVER_URL}/api/payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userid: curAccount,
           amount: Number(amount),
-          // description: `Deposit for ${mode} mode task: ${title}`,
+          description: `Task deposit: ${title}`
         }),
       });
 

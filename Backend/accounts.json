@@ -36,8 +36,33 @@
     "username": "abc520",
     "email": "abc@example.edu",
     "password": "o238nBKoqla#U&c",
-    "balance": 100,
-    "transactions": [],
+    "balance": 20,
+    "transactions": [
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: Finish first two paragraphs of nutrition reflection paper by 5/18",
+        "date": "2025-05-11T17:14:00.064Z"
+      },
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: write physics notesheet for exam",
+        "date": "2025-05-11T17:16:18.053Z"
+      },
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: Finish History Essay",
+        "date": "2025-05-11T17:17:57.765Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Read 50 pages of stats textbook",
+        "date": "2025-05-11T17:19:17.799Z"
+      }
+    ],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-11T01:34:35.314Z"
   }

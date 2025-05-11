@@ -47,13 +47,14 @@ router.post('/', async (req, res) => {
 // Process payment for task deposit
 router.post('/payment', async (req, res) => {
   try {
-    console.log(req.body)
-    const { userid, amount } = req.body;
+    let { userid, amount, description } = req.body;
 
     // Validate input
     if (!userid || amount === undefined) {
       return res.status(400).json({ error: 'Username and amount are required' });
     }
+
+    amount = Number(amount);
 
     // Find the user's account
     const account = await Account.findOne({ userid });
@@ -65,7 +66,7 @@ router.post('/payment', async (req, res) => {
     if (amount > 0) {
       // For deposits, check sufficient balance
       if (account.balance < amount) {
-        return res.status(400).json({ error: 'Insufficient balance' });
+        return res.status(400).json({ error: `Insufficient balance: ${account.balance} < ${amount}` });
       }
       account.balance -= amount;
     } else {
@@ -81,8 +82,8 @@ router.post('/payment', async (req, res) => {
       date: new Date()
     };
 
-    account.transactions = account.transactions || [];
-    account.transactions.push(transaction);
+    //account.transactions = account.transactions || [];
+    //account.transactions.push(transaction);
 
     // Save the updated account
     await account.save();
@@ -90,7 +91,7 @@ router.post('/payment', async (req, res) => {
     res.json({ 
       success: true,
       newBalance: account.balance,
-      transaction
+      transaction: transaction
     });
   } catch (error) {
     console.error('Payment processing error:', error);
