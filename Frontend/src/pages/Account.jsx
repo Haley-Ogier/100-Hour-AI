@@ -34,6 +34,7 @@ function Account() {
     const [tagline, setTagline]   = useState("");
     const [joinDate, setJoinDate] = useState("");
 
+    // -------- Fetches Account information -------- //
     const fetchAcc = async () => {
         try {
             const res = await fetch(`${SERVER_URL}/api/account`);
@@ -83,6 +84,7 @@ function Account() {
                 alert(err.message);
                 console.error("Error deleting tasks:", err);
             }
+            // ---- Delete account ---- //
             try {
                 const res = await fetch(`${SERVER_URL}/api/account/${curAccount}`, {
                     method: "DELETE",
@@ -99,11 +101,11 @@ function Account() {
                 alert(err.message);
                 console.error("Error deleting account:", err);
             }
-
+            // ---- Sign out ---- //
             signOut();
         }
         else {
-            // Nothing Happens
+            // ---- Nothing Happens ---- //
         }
     }
 
