@@ -370,39 +370,10 @@ app.patch("/api/tasks/:id", (req, res) => {
   res.json(tasks[taskIndex]);
 });
 
-<<<<<<< Updated upstream
-app.delete("/api/tasks/:id", (req, res) => {
-  const tasks = loadTasksFromFile();
-  const user  = req.body.userid;
-
-  const filteredData = tasks.filter((a) => a.userid != user);
-  console.log(filteredData);
-
-  saveTasksToFile(filteredData);
-
-  res.json(filteredData);
-
-});
-
-app.delete("/api/account/:id", (req, res) => {
-  const accounts = loadAccountsFromFile();
-  const user  = req.body.userid;
-
-  const filteredData = accounts.filter((a) => a.userid != user);
-  console.log(filteredData);
-
-  saveAccountsToFile(filteredData);
-
-  res.json(filteredData);
-
-});
-
-=======
 /* ---------- streak route ---------- */
 app.get('/api/streak', (req, res) => {
   const streak = loadFromFile(STREAK_FILE, { current: 0, best: 0, lastDate: null });
   const today = toLocalISODate(new Date().toISOString());
->>>>>>> Stashed changes
 
   if (streak.lastDate && streak.lastDate !== today) {
     // if there's a gap of ≥ 1 day, streak goes back to zero

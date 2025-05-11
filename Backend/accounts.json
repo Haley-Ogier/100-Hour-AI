@@ -14,8 +14,6 @@
     "password": "Test1234!",
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T21:51:18.451Z"
-<<<<<<< Updated upstream
-=======
   },
   {
     "userid": "1746919730780",
@@ -42,6 +40,5 @@
     "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-11T01:34:35.314Z"
->>>>>>> Stashed changes
   }
 ]
