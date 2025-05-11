@@ -38,22 +38,23 @@ router.post('/', async (req, res) => {
     const savedTask = await newTask.save();
 
     res.status(201).json(savedTask);
-  } catch (error) {
-    console.error('Error creating task:', error);
-    res.status(500).json({ error: 'Failed to create task' });
+  } catch (err) {
+    console.error('Error creating task:', err);
+    res.status(500).json({ err: 'Failed to create task' });
   }
 });
 
 // Process payment for task deposit
 router.post('/payment', async (req, res) => {
   try {
-    console.log(req.body)
-    const { userid, amount } = req.body;
+    let { userid, amount, description } = req.body;
 
     // Validate input
     if (!userid || amount === undefined) {
       return res.status(400).json({ error: 'Username and amount are required' });
     }
+
+    amount = Number(amount);
 
     // Find the user's account
     const account = await Account.findOne({ userid });
@@ -65,7 +66,7 @@ router.post('/payment', async (req, res) => {
     if (amount > 0) {
       // For deposits, check sufficient balance
       if (account.balance < amount) {
-        return res.status(400).json({ error: 'Insufficient balance' });
+        return res.status(400).json({ error: `Insufficient balance: ${account.balance} < ${amount}` });
       }
       account.balance -= amount;
     } else {
@@ -81,19 +82,16 @@ router.post('/payment', async (req, res) => {
       date: new Date()
     };
 
-    account.transactions = account.transactions || [];
-    account.transactions.push(transaction);
-
     // Save the updated account
     await account.save();
 
     res.json({ 
       success: true,
       newBalance: account.balance,
-      transaction
+      transaction: transaction
     });
-  } catch (error) {
-    console.error('Payment processing error:', error);
+  } catch (err) {
+    console.error('Payment processing error:', err);
     res.status(500).json({ error: 'Payment processing failed' });
   }
 });
@@ -143,8 +141,8 @@ router.put('/:id/status', async (req, res) => {
 
     const updatedTask = await task.save();
     res.json(updatedTask);
-  } catch (error) {
-    console.error('Error updating task status:', error);
+  } catch (err) {
+    console.error('Error updating task status:', err);
     res.status(500).json({ error: 'Failed to update task status' });
   }
 });
@@ -167,8 +165,8 @@ async function processRefund(userid, amount, description) {
     account.transactions.push(transaction);
     await account.save();
     return true;
-  } catch (error) {
-    console.error('Refund processing error:', error);
+  } catch (err) {
+    console.error('Refund processing error:', err);
     return false;
   }
 }
@@ -179,8 +177,8 @@ router.get('/user/:userid', async (req, res) => {
     const tasks = await Task.find({ userid: req.params.userid })
       .sort({ createdAt: -1 });
     res.json(tasks);
-  } catch (error) {
-    console.error('Error fetching user tasks:', error);
+  } catch (err) {
+    console.error('Error fetching user tasks:', err);
     res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 });
@@ -193,8 +191,8 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
     res.json(task);
-  } catch (error) {
-    console.error('Error fetching task:', error);
+  } catch (err) {
+    console.error('Error fetching task:', err);
     res.status(500).json({ error: 'Failed to fetch task' });
   }
 });

@@ -36,8 +36,45 @@
     "username": "abc520",
     "email": "abc@example.edu",
     "password": "o238nBKoqla#U&c",
-    "balance": 100,
-    "transactions": [],
+    "balance": 200,
+    "transactions": [
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: Complete Machine Learning Group Project by 5/13",
+        "date": "2025-05-11T21:56:10.658Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Finish first two paragraphs of nutrition reflection paper by 5/18",
+        "date": "2025-05-11T21:58:13.212Z"
+      },
+      {
+        "amount": 5,
+        "type": "deposit",
+        "description": "Task deposit: Complete and Review Thermodynamics Practice Sheet",
+        "date": "2025-05-11T22:01:12.461Z"
+      },
+      {
+        "amount": 10,
+        "type": "refund",
+        "description": "Refund for completed task: Complete Machine Learning Group Project by 5/13",
+        "date": "2025-05-11T22:01:49.185Z"
+      },
+      {
+        "amount": 5,
+        "type": "refund",
+        "description": "Refund for completed task: Complete and Review Thermodynamics Practice Sheet",
+        "date": "2025-05-11T22:01:53.731Z"
+      },
+      {
+        "amount": 30,
+        "type": "refund",
+        "description": "Refund for completed task: Finish first two paragraphs of nutrition reflection paper by 5/18",
+        "date": "2025-05-11T22:01:58.661Z"
+      }
+    ],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-11T01:34:35.314Z"
   }
