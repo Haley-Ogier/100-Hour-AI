@@ -64,14 +64,14 @@ app.get("/api/account", (req, res) => {
 
 app.post('/api/account', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
-  const { username, email, password } = req.body;
+  const { userid, username, email, password } = req.body;
 
-  if (!username || !email || !password) {
+  if (!userid || !username || !email || !password) {
     return res.status(400).json({ error: 'username, email, & password required' });
   }
 
   const newAcc = {
-    userid: Date.now().toString(),
+    userid,
     username,
     email,
     password,
@@ -88,11 +88,11 @@ app.post('/api/account', (req, res) => {
 
 app.patch("/api/account/:id", (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
-  const accountid = req.params.id;
+  const accountid = req.body.userid;
   const { username, password, tagline } = req.body;
 
   const account = accounts.find(a => a.userid === accountid);
-  if (!account) return res.status(404).json({ error: "Account not found" });
+  if (!account) return res.status(404).json({ error: `Account not found matching ${accountid}` });
 
   if (username) account.username = username;
   if (password) account.password = password;
@@ -115,7 +115,7 @@ app.post('/api/payment', (req, res) => {
 
   const account = accounts.find(a => a.userid === userid);
   if (!account) {
-    return res.status(404).json({ error: 'Account not found' });
+    return res.status(404).json({ error: `Account not found matching ${userid}` });
   }
 
   const transaction = {
@@ -142,7 +142,7 @@ app.get("/api/tasks", (req, res) => {
 
 app.get("/api/tasks/user/:userid", (req, res) => {
   const tasks = loadFromFile(DB_FILE);
-  const userTasks = tasks.filter(t => t.userid === req.params.userid);
+  const userTasks = tasks.filter(t => t.userid === req.params.id);
   res.json(userTasks);
 });
 
@@ -182,7 +182,7 @@ app.post('/api/tasks', async (req, res) => {
   if (mode !== 'easy') {
     const account = accounts.find(a => a.userid === userid);
     if (!account) {
-      return res.status(404).json({ error: 'Account not found' });
+      return res.status(404).json({ error: `Account not found matching ${userid}` });
     }
 
     if (account.balance < deposit) {
@@ -233,42 +233,31 @@ app.post('/api/tasks', async (req, res) => {
   res.status(201).json(newTask);
 });
 
+
 app.patch("/api/tasks/:id", (req, res) => {
   const tasks = loadFromFile(DB_FILE);
   const accounts = loadFromFile(ACC_FILE);
-  const taskId = req.params.id;
-  const accountid  = req.body.userid;
+  const taskId = req.params.id; // Get task ID from URL params
   const updates = req.body;
-  const updateUsername = req.body.username;
-  const updatePassword = req.body.password;
-  const updateTagline = req.body.tagline;
-
-  const nowISO = new Date().toISOString();
-
-  /* ---------- find account ---------- */
-  const acctIdx = accounts.findIndex(t => t.userid === accountid);
-  if (acctIdx === -1) return res.status(404).json({ error: "Account not found" });
-
-  /* ---------- change password ------- */
-
-  accounts[acctIdx].username = updateUsername;
-  accounts[acctIdx].password = updatePassword;
-  accounts[acctIdx].tagline = updateTagline;
 
   /* ---------- find task ---------- */
-  const taskIdx = tasks.findIndex(t => t.id === taskId);
+  const taskIdx = tasks.findIndex(t => t.id == taskId); // Use == for loose comparison if IDs are mixed types
   if (taskIdx === -1) return res.status(404).json({ error: "Task not found" });
 
   const task = tasks[taskIdx];
+  const nowISO = new Date().toISOString();
 
   /* ---------- handle completion ---------- */
-  if (updates.completed === true && !task.completed) {
+  if (updates.completed && !task.completed) {
     updates.completedAt = nowISO;
 
     // Refund deposit if applicable
     if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
       const account = accounts.find(a => a.userid === task.userid);
-      if (account) {
+      if (!account) {
+        console.error(`Account not found for userid: ${task.userid}`);
+        // Continue with task update even if account not found
+      } else {
         account.balance += task.deposit;
         account.transactions.push({
           amount: task.deposit,
@@ -281,16 +270,9 @@ app.patch("/api/tasks/:id", (req, res) => {
       updates.paymentStatus = 'refunded';
     }
 
-  /* -------------------------------------------------------------------
-   * 1.  User just marked the task COMPLETE
-   * -----------------------------------------------------------------*/
-  if (updates.completed === true && !tasks[taskIdx].completed) {
-    const nowISO = new Date().toISOString();
-    updates.completedAt = nowISO;             // timestamp for history
-
     /* ----------- streak bookkeeping ----------- */
-    const streak = loadStreak();              // { current, best, lastDate }
-    const today  = toLocalISODate(nowISO);    // "MM/DD/YYYY" in local TZ
+    const streak = loadFromFile(STREAK_FILE, { current: 0, best: 0, lastDate: null });
+    const today = toLocalISODate(nowISO);
 
     if (streak.lastDate === today) {
       /* already counted today → nothing to do */
@@ -309,22 +291,12 @@ app.patch("/api/tasks/:id", (req, res) => {
     if (streak.current > streak.best) streak.best = streak.current;
 
     streak.lastDate = today;
-    saveStreak(streak);
+    saveToFile(STREAK_FILE, streak);
+  } 
+  /* ---------- handle un-completion ---------- */
+  if (!updates.completed && task.completed) {
+    updates.completedAt = null;
   }
-
-    /* -------------------------------------------------------------------
-    * 2.  User just UN-checked a previously complete task
-    * -----------------------------------------------------------------*/
-    if (updates.completed === false && tasks[taskIdx].completed) {
-      updates.completedAt = null;
-    }
-
-    /* ---------- persist task update ---------- */
-    tasks[taskIdx] = { ...tasks[taskIdx], ...updates };
-    saveToFile(DB_FILE, tasks);
-    res.json(tasks[taskIdx]);
-  }
-
 
   /* ---------- handle cancellation ---------- */
   if (updates.cancelled === true && !task.cancelled) {
@@ -334,20 +306,22 @@ app.patch("/api/tasks/:id", (req, res) => {
     if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
       const account = accounts.find(a => a.userid === task.userid);
       
-      if (task.mode === 'medium' && account) {
-        // Medium mode gets refund
-        account.balance += task.deposit;
-        account.transactions.push({
-          amount: task.deposit,
-          type: 'refund',
-          description: `Refund for cancelled task: ${task.title}`,
-          date: nowISO
-        });
+      if (account) {
+        if (task.mode === 'medium') {
+          // Medium mode gets refund
+          account.balance += task.deposit;
+          account.transactions.push({
+            amount: task.deposit,
+            type: 'refund',
+            description: `Refund for cancelled task: ${task.title}`,
+            date: nowISO
+          });
+          updates.paymentStatus = 'refunded';
+        } else if (task.mode === 'hard') {
+          // Hard mode forfeits deposit
+          updates.paymentStatus = 'forfeited';
+        }
         saveToFile(ACC_FILE, accounts);
-        updates.paymentStatus = 'refunded';
-      } else if (task.mode === 'hard') {
-        // Hard mode forfeits deposit
-        updates.paymentStatus = 'forfeited';
       }
     }
   }
