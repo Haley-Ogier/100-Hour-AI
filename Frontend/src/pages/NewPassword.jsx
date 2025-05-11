@@ -10,14 +10,31 @@ function ChangePassword() {
   const { curAccount } = useContext(AuthContext);
   const [error, setError] = useState('');
   const [username, setUsername] = useState("");
+  const [tagline, setTagline]   = useState("");
   const [formData, setFormData] = useState({
     newPassword: '',
     confirmPassword: '',
   });
 
+  const fetchAcc = async () => {
+      try {
+          const res = await fetch(`${SERVER_URL}/api/account`);
+          const data = await res.json();
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].userid === curAccount) {
+              setUsername(data[i].username);
+              setTagline(data[i].tagline);
+            }
+          }
+        } catch (err) {
+          alert(err.message);
+          console.error("Error getting account info:", err);
+        }
+  }
+
   useEffect(() => {
-    setUsername(curAccount);
-  }, []);
+      fetchAcc();
+  });
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -85,12 +102,29 @@ function ChangePassword() {
             return;
         }
 
+        try {
+          const res = await fetch(`${SERVER_URL}/api/account`);
+          const data = await res.json();
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].password == formData.password) {
+              setError("password is already taken!");
+              return;
+            }
+    
+          }
+        } catch (err) {
+          alert(err.message);
+          console.error("Error changing password:", err);
+        }
+
         const res = await fetch(`${SERVER_URL}/api/account/${curAccount}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
+                userid: curAccount,
                 username: username,
-                password: formData.newPassword 
+                password: formData.newPassword,
+                tagline: tagline
             }),
         });
 
@@ -99,7 +133,9 @@ function ChangePassword() {
             throw new Error(msg?.error || "Failed to change password");
         }
         
-        navigate('/Home'); // Redirect to home
+        navigate('/Account'); // Redirect to home
+
+        alert("password changed successfully!");
 
     } catch (err) {
       alert(err.message);

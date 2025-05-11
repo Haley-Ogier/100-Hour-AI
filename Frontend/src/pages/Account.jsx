@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Account.css';
 import NavBar from './NavBar';
 import { AuthContext } from "../context/AuthContext";
@@ -39,7 +39,7 @@ function Account() {
             const res = await fetch(`${SERVER_URL}/api/account`);
             const data = await res.json();
             for (var i = 0; i < data.length; i++) {
-              if (data[i].username == curAccount) {
+              if (data[i].userid === curAccount) {
                 setUsername(data[i].username);
                 setEmail(data[i].email);
                 setTagline(data[i].tagline);
@@ -54,10 +54,14 @@ function Account() {
 
     useEffect(() => {
         fetchAcc();
-    }, []);
+    });
 
-    const handlePassword = (e) => {
+    const handlePassword = () => {
         navigate('/NewPassword');
+    }
+
+    const handleEdit = () => {
+        navigate('/EditAccount');
     }
 
     return (
@@ -85,7 +89,7 @@ function Account() {
                                 <span className="detail-key">Member Since:</span>
                                 <span className="detail-value">{joinDate}</span>
                             </div>
-                            <button className="edit-profile-button">Edit Profile</button>
+                            <button className="edit-profile-button" onClick={handleEdit}>Edit Profile</button>
                         </div>
                     </section>
 

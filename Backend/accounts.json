@@ -1,49 +1,34 @@
 [
   {
+    "userid": "1746913502574",
     "username": "Test",
     "email": "Test@email.com",
-    "password": "Test123!"
-  },
-  {
-    "username": "Test2",
-    "email": "Test2@Email.org",
-    "password": "TestTwo0;"
-  },
-  {
-    "username": "Test3",
-    "email": "Test3@Email.me",
-    "password": "T3sting."
-  },
-  {
-    "username": "Test4",
-    "email": "Test@email.com",
-    "password": "Blah4Blah+",
-    "createdAt": "2025-05-08T16:27:24.731Z"
-  },
-  {
-    "username": "Test5",
-    "email": "Test@email.com",
-    "password": "Testing99.",
-    "tagline": "Here is my tagline!",
-    "createdAt": "2025-05-08T16:35:52.507Z"
-  },
-  {
-    "username": "Test6",
-    "email": "Test@Email.org",
-    "password": "ASDFGHJKL9,",
+    "password": "Test123!",
     "tagline": "Here is my tagline",
-    "createdAt": "2025-05-08T17:27:37.954Z"
+    "createdAt": "2025-05-10T21:45:02.574Z"
   },
   {
-    "username": "wlc520",
-    "email": "wlcai@umass.edu",
-    "password": "o238nBKoqla#U&c",
-    "createdAt": "2025-05-08T18:40:12.721Z"
+    "userid": "1746913878451",
+    "username": "Test2",
+    "email": "Test2@email.com",
+    "password": "Testing2,",
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-10T21:51:18.451Z"
   },
   {
-    "username": "Test7",
-    "email": "Test7@email.gov",
-    "password": "C0nf1rm>",
-    "createdAt": "2025-05-08T19:00:54.996Z"
+    "userid": "1746919730780",
+    "username": "Test3",
+    "email": "Test3@email.com",
+    "password": "Test12345!",
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-10T23:28:50.780Z"
+  },
+  {
+    "userid": "1746919778316",
+    "username": "Test4",
+    "email": "Test4@email.com",
+    "password": "Testing1!",
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-10T23:29:38.316Z"
   }
 ]

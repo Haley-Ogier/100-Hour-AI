@@ -142,6 +142,7 @@ app.post('/api/account', (req, res) => {
       return res.status(400).json({ error: 'username, email, & password required' });
     
     const newAcc = {
+      userid: Date.now().toString(),
       username,
       email,
       password,
@@ -156,7 +157,7 @@ app.post('/api/account', (req, res) => {
 app.post('/api/tasks', (req, res) => {
   const tasks = loadTasksFromFile();
   const {
-        username,
+        userid,
         title,
         deadline,
         description,
@@ -188,7 +189,7 @@ app.post('/api/tasks', (req, res) => {
   
   const newTask = {
     id: Date.now(),
-    username,
+    userid,
     title,
     deadline,
     description,
@@ -207,16 +208,21 @@ app.post('/api/tasks', (req, res) => {
 
 app.patch("/api/account/:id", (req, res) => {
   const accounts   = loadAccountsFromFile();
-  const accountid  = req.body.username;
-  const updates = req.body.password;                    // e.g. { password: newPassword }
+  const accountid  = req.body.userid;
+  const updateUsername = req.body.username;
+  const updatePassword = req.body.password;
+  const updateTagline = req.body.tagline;
+
 
   /* ---------- find account ---------- */
-  const idx = accounts.findIndex(t => t.username === accountid);
+  const idx = accounts.findIndex(t => t.userid === accountid);
   if (idx === -1) return res.status(404).json({ error: "Account not found" });
 
   /* ---------- change password ------- */
 
-  accounts[idx].password = updates;
+  accounts[idx].username = updateUsername;
+  accounts[idx].password = updatePassword;
+  accounts[idx].tagline = updateTagline;
 
   /* ---------- persist task update ---------- */
   

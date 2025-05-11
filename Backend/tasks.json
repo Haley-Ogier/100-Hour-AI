@@ -1,7 +1,7 @@
 [
   {
     "id": 1745277533238,
-    "username": "Test",
+    "userid": "1746913502574",
     "title": "First",
     "deadline": "2025-04-26",
     "description": "Make this work",
@@ -11,7 +11,7 @@
   },
   {
     "id": 1745277657639,
-    "username": "Test2",
+    "userid": "1746913502574",
     "title": "Second",
     "deadline": "2025-05-08",
     "description": "Longer",
@@ -21,7 +21,7 @@
   },
   {
     "id": 1745277680182,
-    "username": "Test3",
+    "userid": "1746913502574",
     "title": "Third",
     "deadline": "2025-04-22",
     "description": "none",
@@ -31,7 +31,7 @@
   },
   {
     "id": 1745277702460,
-    "username": "Test4",
+    "userid": "1746913502574",
     "title": "Fourth",
     "deadline": "2025-05-08",
     "description": "jfk",
@@ -41,7 +41,7 @@
   },
   {
     "id": 1746217935345,
-    "username": "Test5",
+    "userid": "1746913502574",
     "title": "New Task",
     "deadline": "2025-05-16",
     "description": "this is the new update",
@@ -55,7 +55,7 @@
   },
   {
     "id": 1746729627341,
-    "username": "Test6",
+    "userid": "1746913502574",
     "title": "Finish History Essay",
     "deadline": "2025-05-14",
     "description": "",
@@ -64,12 +64,12 @@
     "deposit": null,
     "depositPaid": false,
     "createdAt": "2025-05-08T18:40:27.341Z",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-10T22:36:06.384Z"
   },
   {
     "id": 1746729642687,
-    "username": "Test7",
+    "userid": "1746913502574",
     "title": "Complete coding project",
     "deadline": "2025-05-15",
     "description": "",
@@ -78,12 +78,12 @@
     "deposit": 20,
     "depositPaid": true,
     "createdAt": "2025-05-08T18:40:42.687Z",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-10T22:36:08.098Z"
   },
   {
     "id": 1746729655382,
-    "username": "Test",
+    "userid": "1746913502574",
     "title": "Finish History Essay",
     "deadline": "2025-05-15",
     "description": "",
@@ -97,7 +97,7 @@
   },
   {
     "id": 1746730891802,
-    "username": "Test2",
+    "userid": "1746913502574",
     "title": "ChrisTestingTask",
     "deadline": "2025-05-09",
     "description": "Test",
@@ -106,12 +106,12 @@
     "deposit": null,
     "depositPaid": false,
     "createdAt": "2025-05-08T19:01:31.802Z",
-    "completed": false,
-    "completedAt": null
+    "completed": true,
+    "completedAt": "2025-05-10T21:50:28.299Z"
   },
   {
     "id": 1746731339618,
-    "username": "Test3",
+    "userid": "1746913502574",
     "title": "Create a Study Plan and Review Test Materials for Upcoming Exam",
     "deadline": "2025-05-09",
     "description": "",
@@ -125,7 +125,7 @@
   },
   {
     "id": 1746737293231,
-    "username": "Test7",
+    "userid": "1746913502574",
     "title": "TieTaskToAccount",
     "deadline": "2025-06-07",
     "description": "Test",
@@ -139,7 +139,7 @@
   },
   {
     "id": 1746738018318,
-    "username": "Test7",
+    "userid": "1746913502574",
     "title": "TestTaskFiltering",
     "deadline": "2025-05-31",
     "description": "This task should only appear when logged in with this account",
@@ -148,6 +148,104 @@
     "deposit": null,
     "depositPaid": false,
     "createdAt": "2025-05-08T21:00:18.318Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746913035466,
+    "userid": "1746913502574",
+    "title": "TestUserID",
+    "deadline": "2025-05-31",
+    "description": "Test",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T21:37:15.466Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746913905962,
+    "userid": "1746913878451",
+    "title": "TestTaskOnNewAccount",
+    "deadline": "2025-07-12",
+    "description": "Test",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T21:51:45.962Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746914144112,
+    "userid": "1746913878451",
+    "title": "Test1",
+    "deadline": "2025-08-22",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T21:55:44.112Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746914398461,
+    "userid": "1746913878451",
+    "title": "Test2",
+    "deadline": "2025-08-08",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T21:59:58.461Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746915117871,
+    "userid": "1746913878451",
+    "title": "Task3",
+    "deadline": "2025-10-31",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T22:11:57.871Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746915255401,
+    "userid": "1746913878451",
+    "title": "Test4",
+    "deadline": "2025-12-06",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T22:14:15.401Z",
+    "completed": false,
+    "completedAt": null
+  },
+  {
+    "id": 1746919795207,
+    "userid": "1746919778316",
+    "title": "TestOnAccount4",
+    "deadline": "2025-06-05",
+    "description": "",
+    "type": "task",
+    "mode": "easy",
+    "deposit": null,
+    "depositPaid": false,
+    "createdAt": "2025-05-10T23:29:55.207Z",
     "completed": false,
     "completedAt": null
   }

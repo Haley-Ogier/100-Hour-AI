@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 
-const SERVER_URL = "http://localhost:4000";
-
 function TaskCreate() {
   const navigate = useNavigate();
 
@@ -15,7 +13,6 @@ function TaskCreate() {
   /* -------------------------------------------------------------
    * form state
    * ----------------------------------------------------------- */
-  const [username, setName]     = useState("");
   const [title, setTitle]       = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDesc]  = useState("");
@@ -66,25 +63,6 @@ function TaskCreate() {
       setLoadingSuggestions(false);
     }
   }
-  
-  const fetchAcc = async () => {
-    try {
-        const res = await fetch(`${SERVER_URL}/api/account`);
-        const data = await res.json();
-        for (var i = 0; i < data.length; i++) {
-          if (data[i].username == curAccount) {
-            setName(data[i].username);
-          }
-        }
-      } catch (err) {
-        alert(err.message);
-        console.error("Error getting account info:", err);
-      }
-  }
-
-  useEffect(() => {
-    fetchAcc();
-  }, []);
 
   /* -------------------------------------------------------------
    * submit handler
@@ -109,7 +87,7 @@ function TaskCreate() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username,
+          userid: curAccount,
           title,
           deadline,
           description,
