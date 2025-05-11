@@ -99,7 +99,7 @@ export default function Signup() {
       const res = await fetch(`${SERVER_URL}/api/account`);
       const data = await res.json();
       for (var i = 0; i < data.length; i++) {
-        if (data[i].username == formData.username || data[i].password == formData.password) {
+        if (data[i].username === formData.username || data[i].password === formData.password) {
           setError("Username and/or password is already taken!");
           return;
         }
@@ -122,19 +122,30 @@ export default function Signup() {
           password: formData.password,
         }),
       });
-
       if (!res.ok) {
         const msg = await res.json().catch(() => null);
         throw new Error(msg?.error || "Failed to create account");
       }
-
-      console.log('Signing up with:', formData);
-
       // ✅ Simulate successful signup
-      signIn(formData.username); // Mark user as signed in
+      // signIn(formData.username); // Mark user as signed in
 
-      navigate('/Home'); // Redirect to home
+      // navigate('/Home'); // Redirect to home
 
+    } catch (err) {
+      alert(err.message);
+      console.error("Error creating account:", err);
+    }
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/account`);
+      const data = await res.json();
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].username == formData.username) {
+          console.log('Signing up with:', formData);
+          signIn(data[i].userid);
+          navigate('/Home');
+        }
+      }
     } catch (err) {
       alert(err.message);
       console.error("Error creating account:", err);

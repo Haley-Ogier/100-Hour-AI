@@ -27,12 +27,12 @@ function SignIn() {
       const res = await fetch(`${SERVER_URL}/api/account`);
       const data = await res.json();
       for (var i = 0; i < data.length; i++) {
-        if (data[i].username == formData.username && data[i].password == formData.password) {
+        if (data[i].username === formData.username && data[i].password === formData.password) {
           // For now this just simulates a successful login.
           console.log('Signing in with:', formData);
 
           // ✅ Mark the user as authenticated
-          signIn(formData.username);
+          signIn(data[i].userid);
 
           // ✅ Redirect to a protected route
           navigate('/Home');

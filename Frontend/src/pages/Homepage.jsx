@@ -99,12 +99,16 @@ export default function HomePage() {
   /* ------------------------------------------------------------------
    * Data loaders
    * ----------------------------------------------------------------*/
+
   const fetchAllTasks = async () => {
     try {
-      const res = await fetch(`${SERVER_URL}/api/tasks`);
+      const res = await fetch(`${SERVER_URL}/api/tasks`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
       const data = await res.json();
-      data.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-      const filteredData = data.filter((a) => a.username === curAccount);
+      const filteredData = data.filter((a) => a.userid == curAccount);
+      filteredData.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
       setAllTasks(filteredData);
       setLoadedItems(filteredData.slice(0, ITEMS_PER_BATCH));
       setItemsCount(ITEMS_PER_BATCH);
@@ -115,7 +119,10 @@ export default function HomePage() {
 
   const fetchStreak = async () => {
     try {
-      const res = await fetch(`${SERVER_URL}/api/streak`);
+      const res = await fetch(`${SERVER_URL}/api/streak`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
       const { streak, bestStreak } = await res.json();
       setStreak(streak ?? 0);
       setBest(bestStreak ?? 0);
