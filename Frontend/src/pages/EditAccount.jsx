@@ -109,24 +109,32 @@ function EditAccount() {
                     <h1 className='edit-account-title'>Edit Account Info:</h1>
                 </div>
 
-                <div className="account-content">
-                        <div className="account-info">
-                            <input 
-                                id="username" 
-                                name="username"
-                                defaultValue={username}
-                                onLoad={handleChange}
-                                onChange={handleChange} 
-                                required
-                            />
-                            <input 
-                                id="tagline"
-                                name="tagline"
-                                defaultValue={tagline}
-                                onLoad={handleChange}
-                                onChange={handleChange}
-                            />
-                            <button className="edit-profile-button" onClick={handleSubmit}>Save Profile</button>
+                <div className="edit-account-content">
+                        <div className="edit-account-info">
+                            <div className="edit-detail-row">
+                                <span className="edit-detail-key">Username:</span>
+                                <input 
+                                    className="edit-detail-username"
+                                    id="username" 
+                                    name="username"
+                                    defaultValue={username}
+                                    onLoad={handleChange}
+                                    onChange={handleChange} 
+                                    required
+                                />
+                            </div>
+                            <div className="edit-detail-row">
+                                <span className="edit-detail-key">Tagline:</span>
+                                <input
+                                    className="edit-detail-tagline"
+                                    id="tagline"
+                                    name="tagline"
+                                    defaultValue={tagline}
+                                    onLoad={handleChange}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <button className="save-profile-button" onClick={handleSubmit}>Save Profile</button>
                         </div>
                 </div>
             </div>
