@@ -5,25 +5,87 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 
+const SERVER_URL = "http://localhost:4000";
+
 function TaskCreate() {
   const navigate = useNavigate();
-
   const { curAccount } = useContext(AuthContext);
 
   /* -------------------------------------------------------------
    * form state
    * ----------------------------------------------------------- */
-  const [title, setTitle]       = useState("");
+  const [userid, setId] = useState("");
+  const [username, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [description, setDesc]  = useState("");
-  const [type, setType]         = useState("task");
-  const [mode, setMode]         = useState("easy");  // Easy/Medium/Hard
-  const [deposit, setDeposit]   = useState("");
+  const [description, setDesc] = useState("");
+  const [type, setType] = useState("task");
+  const [mode, setMode] = useState("easy");
+  const [deposit, setDeposit] = useState("");
+  const [balance, setBalance] = useState(0);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  
   /* -------------------------------------------------------------
    * AI suggestion state
    * ----------------------------------------------------------- */
   const [aiSuggestions, setAiSuggestions] = useState("");
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
+  /* -------------------------------------------------------------
+   * Fetch account info including balance
+   * ----------------------------------------------------------- */
+  const fetchAcc = async () => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/account`);
+      const data = await res.json();
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].userid === curAccount) {
+          setId(data[i].userid);
+          setName(data[i].username);
+          setBalance(100);
+        }
+      }
+    } catch (err) {
+      alert(err.message);
+      console.error("Error getting account info:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAcc();
+  }, []);
+
+  /* -------------------------------------------------------------
+   * Process payment for the deposit
+   * ----------------------------------------------------------- */
+  const processPayment = async (amount) => {
+    try {
+      setPaymentProcessing(true);
+      const res = await fetch(`${SERVER_URL}/api/payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userid: curAccount,
+          amount: Number(amount),
+          // description: `Deposit for ${mode} mode task: ${title}`,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Payment failed");
+      }
+
+      const data = await res.json();
+      setBalance(data.newBalance);
+      return true;
+    } catch (error) {
+      alert(`Payment error: ${error.message}`);
+      return false;
+    } finally {
+      setPaymentProcessing(false);
+    }
+  };
 
   /* -------------------------------------------------------------
    * handleTitleChange
@@ -40,7 +102,6 @@ function TaskCreate() {
   
     try {
       setLoadingSuggestions(true);
-  
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,12 +110,8 @@ function TaskCreate() {
         }),
       });
   
-      if (!res.ok) {
-        throw new Error("Failed to fetch AI suggestions");
-      }
-  
+      if (!res.ok) throw new Error("Failed to fetch AI suggestions");
       const data = await res.json();
-      // Suppose the server returns { result: "some AI text" }
       setAiSuggestions(data.result || "");
     } catch (error) {
       console.error("AI suggestion error:", error);
@@ -65,9 +122,10 @@ function TaskCreate() {
   }
 
   /* -------------------------------------------------------------
-   * submit handler
+   * submit handler with payment processing
    * ----------------------------------------------------------- */
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     if (!title || !deadline) {
@@ -80,14 +138,24 @@ function TaskCreate() {
         alert("Enter a positive deposit for Medium/Hard mode.");
         return;
       }
+
+      // Check if user has sufficient balance
+      if (Number(deposit) > balance) {
+        alert(`Insufficient balance. Your current balance is $${balance}`);
+        return;
+      }
+
+      // Process payment
+      const paymentSuccess = await processPayment(Number(deposit));
+      if (!paymentSuccess) return;
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/tasks", {
+      const res = await fetch(`${SERVER_URL}/api/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userid: curAccount,
+          userid,
           title,
           deadline,
           description,
@@ -95,6 +163,7 @@ function TaskCreate() {
           mode,
           deposit: deposit ? Number(deposit) : null,
           completed: false,
+          paymentStatus: ["medium", "hard"].includes(mode) ? "paid" : "none",
         }),
       });
 
@@ -108,6 +177,11 @@ function TaskCreate() {
     } catch (err) {
       alert(err.message);
       console.error("Error creating task:", err);
+      
+      // If task creation fails after payment, refund the amount
+      if (["medium", "hard"].includes(mode)) {
+        await processPayment(-Number(deposit)); // Negative amount for refund
+      }
     }
   };
 
@@ -135,7 +209,7 @@ function TaskCreate() {
                   type="text"
                   required
                   value={title}
-                  onChange={handleTitleChange} // <== updated!
+                  onChange={handleTitleChange}
                 />
               </div>
 
@@ -199,8 +273,8 @@ function TaskCreate() {
                   }}
                 >
                   <option value="easy">Easy (no deposit)</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
+                  <option value="medium">Medium (refund if quit)</option>
+                  <option value="hard">Hard (forfeit if quit)</option>
                 </select>
               </div>
 
@@ -208,7 +282,7 @@ function TaskCreate() {
               {["medium", "hard"].includes(mode) && (
                 <>
                   <div className="question-column">
-                    <label htmlFor="deposit">Deposit&nbsp;($):</label>
+                    <label htmlFor="deposit">Deposit ($):</label>
                   </div>
                   <div className="input-column">
                     <input
@@ -219,6 +293,9 @@ function TaskCreate() {
                       value={deposit}
                       onChange={(e) => setDeposit(e.target.value)}
                     />
+                    <div className="balance-info">
+                      Your current balance: ${balance.toFixed(2)}
+                    </div>
                   </div>
                 </>
               )}
@@ -226,8 +303,12 @@ function TaskCreate() {
 
             {/* ---- Actions -------------------------------------------------- */}
             <div className="form-actions">
-              <button type="submit" className="submit-button">
-                Create task
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={paymentProcessing}
+              >
+                {paymentProcessing ? "Processing..." : "Create task"}
               </button>
               <button
                 type="button"
@@ -238,18 +319,27 @@ function TaskCreate() {
               </button>
             </div>
 
-            {/* ---- AI SUGGESTIONS SECTION ------------------------------------- */}
+            {/* ---- Payment Info -------------------------------------------- */}
+            {["medium", "hard"].includes(mode) && deposit > 0 && (
+              <div className="payment-info">
+                <p>
+                  <strong>Payment Terms:</strong><br />
+                  {mode === "medium" 
+                    ? "You'll get your deposit back if you quit early or complete the goal."
+                    : "You'll get your deposit back only if you complete the goal. Quitting means forfeiting the deposit."}
+                </p>
+              </div>
+            )}
+
+            {/* ---- AI SUGGESTIONS SECTION --------------------------------- */}
             <div className="ai-suggestions-box">
               {loadingSuggestions && <p>AI is thinking…</p>}
-
-              {/* If we have suggestions, show them in a “bubble” style */}
               {aiSuggestions && (
                 <div className="ai-suggestion-bubble">
                   <strong>AI Suggestion:</strong> {aiSuggestions}
                 </div>
               )}
             </div>
-            {/* ----------------------------------------------------------------- */}
           </form>
         </div>
       </div>

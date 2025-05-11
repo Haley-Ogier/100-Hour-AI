@@ -4,11 +4,11 @@
  */
 require('dotenv').config();
 const express = require('express');
-const cors    = require('cors');
-const fs      = require('fs');
-const path    = require('path');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
-const app  = express();
+const app = express();
 const PORT = 4000;
 
 /* ---------- core middleware ---------- */
@@ -20,173 +20,208 @@ const generateRoute = require('./routes/generate');
 console.log('typeof generateRoute →', typeof generateRoute);
 app.use('/api/generate', generateRoute);   // now req.body is defined
 
-/* ---------- account “database” ---------- */
+/* ---------- database files ---------- */
 const ACC_FILE = path.join(__dirname, 'accounts.json');
-
-/* ---------- tasks “database” helpers ---------- */
 const DB_FILE = path.join(__dirname, 'tasks.json');
-
-/* ---------- streak “database” ---------- */
 const STREAK_FILE = path.join(__dirname, 'streak.json');
 
-function loadAccountsFromFile() {
+/* ---------- helper functions ---------- */
+function loadFromFile(filePath, defaultValue = []) {
   try {
-    if (!fs.existsSync(ACC_FILE)) return [];
-    const data = fs.readFileSync(ACC_FILE, 'utf8');
+    if (!fs.existsSync(filePath)) return defaultValue;
+    const data = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(data);
   } catch (err) {
-    console.error('Failed to read account file', err);
-    return [];
+    console.error(`Failed to read ${filePath}`, err);
+    return defaultValue;
   }
 }
 
-function saveAccountsToFile(accountObj) {
+function saveToFile(filePath, data) {
   try {
-    fs.writeFileSync(ACC_FILE, JSON.stringify(accountObj, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    return true;
   } catch (err) {
-    console.error('Failed to write account fie', err);
+    console.error(`Failed to write ${filePath}`, err);
+    return false;
   }
 }
 
-function loadStreak() {
-  try {
-    if (!fs.existsSync(STREAK_FILE)) {
-      // first run → seed zeros
-      return { current: 0, best: 0, lastDate: null };
-    }
-    return JSON.parse(fs.readFileSync(STREAK_FILE, 'utf8'));
-  } catch (err) {
-    console.error('Failed to read streak file', err);
-    // fallback keeps the app alive
-    return { current: 0, best: 0, lastDate: null };
-  }
-}
-
-function saveStreak(streakObj) {
-  try {
-    fs.writeFileSync(STREAK_FILE, JSON.stringify(streakObj, null, 2));
-  } catch (err) {
-    console.error('Failed to write streak file', err);
-  }
-}
-
-/* helper: turn ISO string → “YYYY-MM-DD” in local TZ */
-const toLocalISODate = iso =>
-  new Date(iso).toLocaleDateString('en-US', {
+function toLocalISODate(iso) {
+  return new Date(iso).toLocaleDateString('en-US', {
     timeZone: 'America/New_York',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
   });
-
-
-function loadTasksFromFile() {
-  try {
-    if (!fs.existsSync(DB_FILE)) return [];
-    const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    console.error('Failed to read tasks file', err);
-    return [];
-  }
 }
 
-function saveTasksToFile(tasks) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(tasks, null, 2));
-  } catch (err) {
-    console.error('Failed to write tasks file', err);
-  }
-}
-
+/* ---------- account routes ---------- */
 app.get("/api/account", (req, res) => {
-  const accounts = loadAccountsFromFile();
+  const accounts = loadFromFile(ACC_FILE);
   res.json(accounts);
 });
 
-app.get("/api/tasks", (req, res) => {
-  const tasks = loadTasksFromFile();
-  res.json(tasks);
+app.post('/api/account', (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'username, email, & password required' });
+  }
+
+  const newAcc = {
+    userid: Date.now().toString(),
+    username,
+    email,
+    password,
+    balance: 100, // Starting balance
+    transactions: [],
+    tagline: "Here is my tagline",
+    createdAt: new Date().toISOString(),
+  };
+  
+  accounts.push(newAcc);
+  saveToFile(ACC_FILE, accounts);
+  res.status(201).json(newAcc);
 });
 
-app.get('/api/streak', (req, res) => {
-  const streak = loadStreak();
-  
-  /* --- autoreset if the user didn’t log anything today --- */
-  const today = toLocalISODate(new Date().toISOString());
-  if (streak.lastDate && streak.lastDate !== today) {
-    // if there’s a gap of ≥ 1 day, streak goes back to zero
-    const diff =
-      new Date(today) - new Date(streak.lastDate); // ms
-    if (diff > 86400000) {
-      streak.current = 0;
-      saveStreak(streak);
-    }
+app.patch("/api/account/:id", (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const accountid = req.params.id;
+  const { username, password, tagline } = req.body;
+
+  const account = accounts.find(a => a.userid === accountid);
+  if (!account) return res.status(404).json({ error: "Account not found" });
+
+  if (username) account.username = username;
+  if (password) account.password = password;
+  if (tagline) account.tagline = tagline;
+
+  saveToFile(ACC_FILE, accounts);
+  res.json(account);
+});
+
+/* ---------- payment processing ---------- */
+app.post('/api/payment', (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const { userid, amount } = req.body;
+
+  if (!userid || amount === undefined) {
+    return res.status(400).json({ error: 'Username and amount required' });
   }
-  
-  res.json({
-    streak:     streak.current,
-    bestStreak: streak.best
+
+  const account = accounts.find(a => a.userid === userid);
+  if (!account) {
+    return res.status(404).json({ error: 'Account not found' });
+  }
+
+  // For deposits (positive amount)
+  if (amount > 0) {
+    if (account.balance < amount) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+    account.balance -= amount;
+  } 
+  // For refunds (negative amount)
+  else {
+    account.balance += Math.abs(amount);
+  }
+
+  const transaction = {
+    amount: Math.abs(amount),
+    type: amount > 0 ? 'deposit' : 'refund',
+    description: description || 'Task deposit',
+    date: new Date().toISOString()
+  };
+
+  account.transactions.push(transaction);
+  saveToFile(ACC_FILE, accounts);
+
+  res.json({ 
+    success: true,
+    newBalance: account.balance,
+    transaction
   });
 });
 
-app.post('/api/account', (req, res) => {
-  const account = loadAccountsFromFile();
-  const {
-        username,
-        email,
-        password,
-    } = req.body;
-
-    if (!username || !email || !password)
-      return res.status(400).json({ error: 'username, email, & password required' });
-    
-    const newAcc = {
-      userid: Date.now().toString(),
-      username,
-      email,
-      password,
-      tagline: "Here is my tagline",
-      createdAt: new Date().toISOString(),
-    };
-    account.push(newAcc);
-    saveAccountsToFile(account);
-    res.status(201).json(newAcc);
+/* ---------- task routes ---------- */
+app.get("/api/tasks", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  res.json(tasks);
 });
 
-app.post('/api/tasks', (req, res) => {
-  const tasks = loadTasksFromFile();
-  const {
-        userid,
-        title,
-        deadline,
-        description,
-        type               = 'task',
-        mode               = 'easy',     // EASY by default
-        deposit            = null        // number | null
-      } = req.body;
+app.get("/api/tasks/user/:userid", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const userTasks = tasks.filter(t => t.userid === req.params.userid);
+  res.json(userTasks);
+});
 
-/* ---------- validation ---------- */
-  if (!title || !deadline)
-    return res.status(400).json({ error: 'title & deadline are required' });
-  
-  if (!['easy', 'medium', 'hard'].includes(mode))
+app.post('/api/tasks', async (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const accounts = loadFromFile(ACC_FILE);
+  const {
+    userid,
+    title,
+    deadline,
+    description,
+    type = 'task',
+    mode = 'easy',
+    deposit = null
+  } = req.body;
+
+
+  /* ---------- validation ---------- */
+  if (!title || !deadline) {
+    return res.status(400).json({ error: 'Title & deadline are required' });
+  }
+
+  if (!['easy', 'medium', 'hard'].includes(mode)) {
     return res.status(400).json({ error: 'invalid accountability mode' });
-  
+  }
+
   if (['medium', 'hard'].includes(mode)) {
-    if (deposit === null || Number(deposit) <= 0)
-      return res.status(400).json({ error: 'deposit required for medium/hard' });
+    if (!deposit || Number(deposit) <= 0) {
+      return res.status(400).json({ error: 'positive deposit required for medium/hard mode' });
     }
-  
-    /* ---------- fake “payment” ---------- */
-    let depositPaid = false;
-    if (deposit !== null) {
-  // stub: 90 % success; 10 % failure to demo the requirement
-      depositPaid = Math.random() < 0.9;
-      if (!depositPaid)
-        return res.status(402).json({ error: 'payment failed – please try again' });
-      }
-  
+  }
+
+  /* ---------- process payment if needed ---------- */
+  let paymentSuccess = true;
+  let paymentStatus = 'none';
+
+  if (mode !== 'easy') {
+    const account = accounts.find(a => a.username === username);
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    if (account.balance < deposit) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Simulate payment processing (90% success rate)
+    paymentSuccess = Math.random() < 0.9;
+    if (!paymentSuccess) {
+      return res.status(402).json({ error: 'payment failed – please try again' });
+    }
+
+    // Deduct from balance
+    account.balance -= deposit;
+    paymentStatus = 'paid';
+
+    // Record transaction
+    account.transactions.push({
+      amount: deposit,
+      type: 'deposit',
+      description: `Task deposit: ${title}`,
+      date: new Date().toISOString()
+    });
+
+    saveToFile(ACC_FILE, accounts);
+  }
+
+  /* ---------- create task ---------- */
   const newTask = {
     id: Date.now(),
     userid,
@@ -195,24 +230,32 @@ app.post('/api/tasks', (req, res) => {
     description,
     type,
     mode,
-    deposit,
-    depositPaid,
+    deposit: mode !== 'easy' ? Number(deposit) : null,
+    paymentStatus,
     createdAt: new Date().toISOString(),
     completed: false,
-    completedAt: null
+    completedAt: null,
+    cancelled: false,
+    cancelledAt: null
   };
+
   tasks.push(newTask);
   saveTasksToFile(tasks);
   res.status(201).json(newTask);
 });
 
-app.patch("/api/account/:id", (req, res) => {
-  const accounts   = loadAccountsFromFile();
+app.patch("/api/tasks/:id", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const accounts = loadFromFile(ACC_FILE);
+  const taskId = req.params.id;
   const accountid  = req.body.userid;
+  const updates = req.body;
   const updateUsername = req.body.username;
   const updatePassword = req.body.password;
   const updateTagline = req.body.tagline;
 
+  const task = tasks[taskIndex];
+  const nowISO = new Date().toISOString();
 
   /* ---------- find account ---------- */
   const idx = accounts.findIndex(t => t.userid === accountid);
@@ -224,17 +267,25 @@ app.patch("/api/account/:id", (req, res) => {
   accounts[idx].password = updatePassword;
   accounts[idx].tagline = updateTagline;
 
-  /* ---------- persist task update ---------- */
-  
-  saveAccountsToFile(accounts);
+  /* ---------- handle completion ---------- */
+  if (updates.completed === true && !task.completed) {
+    updates.completedAt = nowISO;
 
-  res.json(accounts[idx]);
-});
-
-app.patch("/api/tasks/:id", (req, res) => {
-  const tasks   = loadTasksFromFile();
-  const taskId  = Number(req.params.id);
-  const updates = req.body;                    // e.g. { completed: true }
+    // Refund deposit if applicable
+    if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
+      const account = accounts.find(a => a.username === task.username);
+      if (account) {
+        account.balance += task.deposit;
+        account.transactions.push({
+          amount: task.deposit,
+          type: 'refund',
+          description: `Refund for completed task: ${task.title}`,
+          date: nowISO
+        });
+        saveToFile(ACC_FILE, accounts);
+      }
+      updates.paymentStatus = 'refunded';
+    }
 
   /* ---------- find task ---------- */
   const idx = tasks.findIndex(t => t.id === taskId);
@@ -271,47 +322,73 @@ app.patch("/api/tasks/:id", (req, res) => {
     saveStreak(streak);
   }
 
-  /* -------------------------------------------------------------------
-   * 2.  User just UN-checked a previously complete task
-   * -----------------------------------------------------------------*/
-  if (updates.completed === false && tasks[idx].completed) {
-    updates.completedAt = null;
+    /* -------------------------------------------------------------------
+    * 2.  User just UN-checked a previously complete task
+    * -----------------------------------------------------------------*/
+    if (updates.completed === false && tasks[idx].completed) {
+      updates.completedAt = null;
+    }
+
+    /* ---------- persist task update ---------- */
+    tasks[idx] = { ...tasks[idx], ...updates };
+    saveTasksToFile(tasks);
+
+    res.json(tasks[idx]);
   }
 
-  /* ---------- persist task update ---------- */
-  tasks[idx] = { ...tasks[idx], ...updates };
-  saveTasksToFile(tasks);
 
-  res.json(tasks[idx]);
+  /* ---------- handle cancellation ---------- */
+  if (updates.cancelled === true && !task.cancelled) {
+    updates.cancelledAt = nowISO;
+
+    // Handle deposit based on mode
+    if (task.mode !== 'easy' && task.paymentStatus === 'paid') {
+      const account = accounts.find(a => a.userid === task.userid);
+      
+      if (task.mode === 'medium' && account) {
+        // Medium mode gets refund
+        account.balance += task.deposit;
+        account.transactions.push({
+          amount: task.deposit,
+          type: 'refund',
+          description: `Refund for cancelled task: ${task.title}`,
+          date: nowISO
+        });
+        saveToFile(ACC_FILE, accounts);
+        updates.paymentStatus = 'refunded';
+      } else if (task.mode === 'hard') {
+        // Hard mode forfeits deposit
+        updates.paymentStatus = 'forfeited';
+      }
+    }
+  }
+
+  /* ---------- persist updates ---------- */
+  tasks[taskIndex] = { ...task, ...updates };
+  saveToFile(DB_FILE, tasks);
+
+  res.json(tasks[taskIndex]);
 });
 
-app.delete("/api/tasks/:id", (req, res) => {
-  const tasks = loadTasksFromFile();
-  const user  = req.body.userid;
+/* ---------- streak route ---------- */
+app.get('/api/streak', (req, res) => {
+  const streak = loadFromFile(STREAK_FILE, { current: 0, best: 0, lastDate: null });
+  const today = toLocalISODate(new Date().toISOString());
 
-  const filteredData = tasks.filter((a) => a.userid != user);
-  console.log(filteredData);
+  if (streak.lastDate && streak.lastDate !== today) {
+    // if there's a gap of ≥ 1 day, streak goes back to zero
+    const diff = new Date(today) - new Date(streak.lastDate); // ms
+    if (diff > 86400000) {
+      streak.current = 0;
+      saveToFile(STREAK_FILE, streak);
+    }
+  }
 
-  saveTasksToFile(filteredData);
-
-  res.json(filteredData);
-
+  res.json({
+    streak: streak.current,
+    bestStreak: streak.best
+  });
 });
-
-app.delete("/api/account/:id", (req, res) => {
-  const accounts = loadAccountsFromFile();
-  const user  = req.body.userid;
-
-  const filteredData = accounts.filter((a) => a.userid != user);
-  console.log(filteredData);
-
-  saveAccountsToFile(filteredData);
-
-  res.json(filteredData);
-
-});
-
-
 
 if (require.main === module) {
   app.listen(PORT, () =>
