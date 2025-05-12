@@ -102,6 +102,19 @@ app.patch("/api/account/:id", (req, res) => {
   res.json(account);
 });
 
+app.delete("/api/account/:id", (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = accounts.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(ACC_FILE, filteredData);
+
+  res.json(filteredData);
+
+});
+
 /* ---------- payment processing ---------- */
 app.post('/api/payment', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
@@ -331,6 +344,19 @@ app.patch("/api/tasks/:id", (req, res) => {
   saveToFile(DB_FILE, tasks);
 
   res.json(tasks[taskIdx]);
+});
+
+app.delete("/api/tasks/:id", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = tasks.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(DB_FILE, filteredData);
+
+  res.json(filteredData);
+
 });
 
 /* ---------- streak route ---------- */
