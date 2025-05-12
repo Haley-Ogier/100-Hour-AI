@@ -36,7 +36,7 @@
     "username": "abc520",
     "email": "abc@example.edu",
     "password": "o238nBKoqla#U&c",
-    "balance": 200,
+    "balance": 130,
     "transactions": [
       {
         "amount": 10,
@@ -73,6 +73,42 @@
         "type": "refund",
         "description": "Refund for completed task: Finish first two paragraphs of nutrition reflection paper by 5/18",
         "date": "2025-05-11T22:01:58.661Z"
+      },
+      {
+        "amount": 20,
+        "type": "deposit",
+        "description": "Task deposit: Test deposit 2",
+        "date": "2025-05-12T16:23:10.456Z"
+      },
+      {
+        "amount": 50,
+        "type": "deposit",
+        "description": "Task deposit: Test deposit 3",
+        "date": "2025-05-12T16:23:29.769Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Test deposit 4",
+        "date": "2025-05-12T16:23:50.273Z"
+      },
+      {
+        "amount": 30,
+        "type": "refund",
+        "description": "Refund for completed task: Test deposit 4",
+        "date": "2025-05-12T16:24:03.717Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Test deposit 5",
+        "date": "2025-05-12T16:28:37.587Z"
+      },
+      {
+        "amount": 30,
+        "type": "refund",
+        "description": "Refund for completed task: Test deposit 5",
+        "date": "2025-05-12T16:28:40.297Z"
       }
     ],
     "tagline": "Here is my tagline",
@@ -82,7 +118,7 @@
     "username": "depositTest",
     "email": "depo@example.edu",
     "password": "?'8->rq,Hq=_]pY",
-    "balance": 40,
+    "balance": 70,
     "transactions": [
       {
         "amount": 10,
@@ -101,6 +137,24 @@
         "type": "deposit",
         "description": "Task deposit: Deposit test 4",
         "date": "2025-05-12T00:00:33.916Z"
+      },
+      {
+        "amount": 10,
+        "type": "refund",
+        "description": "Refund for completed task: Deposit test 2",
+        "date": "2025-05-12T00:22:58.126Z"
+      },
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: deposit 5",
+        "date": "2025-05-12T00:23:33.749Z"
+      },
+      {
+        "amount": 30,
+        "type": "refund",
+        "description": "Refund for completed task: Deposit test 3",
+        "date": "2025-05-12T00:26:06.851Z"
       }
     ],
     "tagline": "Here is my tagline",
