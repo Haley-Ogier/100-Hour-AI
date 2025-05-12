@@ -50,7 +50,7 @@ router.post('/payment', async (req, res) => {
     let { userid, amount, description } = req.body;
 
     // Validate input
-    if (!userid || amount === undefined) {
+    if (amount === undefined) {
       return res.status(400).json({ error: 'Username and amount are required' });
     }
 

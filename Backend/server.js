@@ -66,7 +66,7 @@ app.post('/api/account', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
   const { userid, username, email, password } = req.body;
 
-  if (!userid || !username || !email || !password) {
+  if (!username || !email || !password) {
     return res.status(400).json({ error: 'username, email, & password required' });
   }
 
@@ -107,7 +107,7 @@ app.post('/api/payment', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
   let { userid, amount, description } = req.body;
 
-  if (!userid || amount === undefined) {
+  if (amount === undefined) {
     return res.status(400).json({ error: 'Username and amount required' });
   }
 

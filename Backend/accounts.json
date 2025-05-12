@@ -77,5 +77,33 @@
     ],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-11T01:34:35.314Z"
+  },
+  {
+    "username": "depositTest",
+    "email": "depo@example.edu",
+    "password": "?'8->rq,Hq=_]pY",
+    "balance": 40,
+    "transactions": [
+      {
+        "amount": 10,
+        "type": "deposit",
+        "description": "Task deposit: Deposit test 2",
+        "date": "2025-05-11T23:59:53.236Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Deposit test 3",
+        "date": "2025-05-12T00:00:06.938Z"
+      },
+      {
+        "amount": 20,
+        "type": "deposit",
+        "description": "Task deposit: Deposit test 4",
+        "date": "2025-05-12T00:00:33.916Z"
+      }
+    ],
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-11T23:59:20.246Z"
   }
 ]
