@@ -353,6 +353,32 @@ app.get('/api/streak', (req, res) => {
   });
 });
 
+app.delete("/api/tasks/:id", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = tasks.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(DB_FILE, filteredData);
+
+  res.json(filteredData);
+
+});
+
+app.delete("/api/account/:id", (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = accounts.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(ACC_FILE, filteredData);
+
+  res.json(filteredData);
+
+});
+
 if (require.main === module) {
   app.listen(PORT, () =>
     console.log(`Server listening on http://localhost:${PORT}`)
