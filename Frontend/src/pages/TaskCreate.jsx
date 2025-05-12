@@ -52,7 +52,7 @@ function TaskCreate() {
     }
   };
 
-  useEffect(() => { fetchAcc(); });
+  useEffect(() => { fetchAcc(); }, []);
 
   /* -------------------------------------------------------------
    * Process payment for the deposit
