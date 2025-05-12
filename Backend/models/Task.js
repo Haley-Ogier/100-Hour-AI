@@ -68,6 +68,7 @@ const TaskSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
+TaskSchema.index({ id: 1 });
 TaskSchema.index({ userid: 1 });
 TaskSchema.index({ deadline: 1 });
 TaskSchema.index({ completed: 1 });
