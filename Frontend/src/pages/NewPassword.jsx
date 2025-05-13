@@ -160,6 +160,10 @@ function ChangePassword() {
             />
           </div>
           
+          <div className="requirements">
+          <label htmlFor="ask">Your password must be 8-16 characters long, and include a capitalized letter (A-Z), special character (!, @, etc.), and a number (0-9)</label>
+          </div>
+
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input 

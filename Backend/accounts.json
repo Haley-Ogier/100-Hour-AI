@@ -4,6 +4,8 @@
     "username": "Test",
     "email": "Test@email.com",
     "password": "Test123!",
+    "balance": 200,
+    "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T21:45:02.574Z"
   },
@@ -12,6 +14,8 @@
     "username": "Test2",
     "email": "Test2@email.com",
     "password": "Test1234!",
+    "balance": 200,
+    "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T21:51:18.451Z"
   },
@@ -20,6 +24,8 @@
     "username": "Test3",
     "email": "Test3@email.com",
     "password": "Test12345!",
+    "balance": 200,
+    "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T23:28:50.780Z"
   },
@@ -28,6 +34,8 @@
     "username": "Test4",
     "email": "Test4@email.com",
     "password": "Testing1!",
+    "balance": 200,
+    "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-10T23:29:38.316Z"
   },

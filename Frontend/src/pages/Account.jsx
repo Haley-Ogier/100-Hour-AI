@@ -33,6 +33,7 @@ function Account() {
     const [email, setEmail]       = useState("");
     const [tagline, setTagline]   = useState("");
     const [joinDate, setJoinDate] = useState("");
+    const [balance, setBalance]   = useState(0);
 
     const fetchAcc = async () => {
         try {
@@ -44,6 +45,7 @@ function Account() {
                 setEmail(data[i].email);
                 setTagline(data[i].tagline);
                 setJoinDate(formatDate(data[i].createdAt));
+                setBalance(data[i].balance);
               }
             }
           } catch (err) {
@@ -117,10 +119,10 @@ function Account() {
                 </div>
 
                 <div className="account-content">
-                    <section className="account-section account-info">
+                    <section className="account-section account-section">
                         <h2 className="section-title">Account Information</h2>
                         <div className="account-info">
-                            <div className="detail-row">
+                        <div className="detail-row">
                                 <span className="detail-key">Username:</span>
                                 <span className="detail-value">{username}</span>
                             </div>
@@ -129,21 +131,24 @@ function Account() {
                                 <span className="detail-value">{email}</span>
                             </div>
                             <div className="detail-row">
+                                <span className="detail-key">Balance:</span>
+                                <span className="detail-value">${balance}</span>
+                            </div>
+                            <div className="detail-bottom-row">
                                 <span className="detail-key">Member Since:</span>
                                 <span className="detail-value">{joinDate}</span>
                             </div>
-                            <button className="edit-profile-button" onClick={handleEdit}>Edit Profile</button>
                         </div>
                     </section>
 
                     <section className="account-section settings-section">
                         <h2 className="section-title">Account Settings</h2>
                         <div className="settings-options">
+                        <button className="settings-button" onClick={handleEdit}>
+                                Edit Profile
+                            </button>
                             <button className="settings-button" onClick={handlePassword}>
                                 Change Password
-                            </button>
-                            <button className="settings-button">
-                                Preferences
                             </button>
                             <button className="settings-button" onClick={signOut}>
                                 Logout
