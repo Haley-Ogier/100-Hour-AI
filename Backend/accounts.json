@@ -127,7 +127,7 @@
     "username": "depositTest",
     "email": "depo@example.edu",
     "password": "?'8->rq,Hq=_]pY",
-    "balance": 70,
+    "balance": 100,
     "transactions": [
       {
         "amount": 10,
@@ -164,6 +164,30 @@
         "type": "refund",
         "description": "Refund for completed task: Deposit test 3",
         "date": "2025-05-12T00:26:06.851Z"
+      },
+      {
+        "amount": 10,
+        "type": "refund",
+        "description": "Refund for completed task: deposit 5",
+        "date": "2025-05-14T01:34:33.893Z"
+      },
+      {
+        "amount": 20,
+        "type": "refund",
+        "description": "Refund for completed task: Deposit test 4",
+        "date": "2025-05-14T01:34:41.119Z"
+      },
+      {
+        "amount": 30,
+        "type": "deposit",
+        "description": "Task deposit: Deposit 6",
+        "date": "2025-05-14T01:35:31.742Z"
+      },
+      {
+        "amount": 30,
+        "type": "refund",
+        "description": "Refund for completed task: Deposit 6",
+        "date": "2025-05-14T01:35:57.900Z"
       }
     ],
     "tagline": "Here is my tagline",
