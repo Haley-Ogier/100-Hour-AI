@@ -44,6 +44,7 @@
     "username": "abc520",
     "email": "abc@example.edu",
     "password": "o238nBKoqla#U&c",
+<<<<<<< HEAD
     "balance": 130,
     "transactions": [
       {
@@ -202,5 +203,15 @@
     "transactions": [],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-14T00:30:18.502Z"
+=======
+    "createdAt": "2025-05-08T18:40:12.721Z"
+  },
+  {
+    "username": "ss041504@gmail.com",
+    "email": "ss041504@gmail.com",
+    "password": "Gogogo2020!",
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-08T19:14:36.841Z"
+>>>>>>> f8e145b (WIP: update sample accounts)
   }
 ]
