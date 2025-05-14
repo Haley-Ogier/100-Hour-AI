@@ -64,14 +64,14 @@ app.get("/api/account", (req, res) => {
 
 app.post('/api/account', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
-  const { userid, username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'username, email, & password required' });
   }
 
   const newAcc = {
-    userid,
+    userid: Date.now().toString(),
     username,
     email,
     password,
@@ -100,6 +100,19 @@ app.patch("/api/account/:id", (req, res) => {
 
   saveToFile(ACC_FILE, accounts);
   res.json(account);
+});
+
+app.delete("/api/account/:id", (req, res) => {
+  const accounts = loadFromFile(ACC_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = accounts.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(ACC_FILE, filteredData);
+
+  res.json(filteredData);
+
 });
 
 /* ---------- payment processing ---------- */
@@ -333,6 +346,19 @@ app.patch("/api/tasks/:id", (req, res) => {
   res.json(tasks[taskIdx]);
 });
 
+app.delete("/api/tasks/:id", (req, res) => {
+  const tasks = loadFromFile(DB_FILE);
+  const user  = req.body.userid;
+
+  const filteredData = tasks.filter((a) => a.userid != user);
+  console.log(filteredData);
+
+  saveToFile(DB_FILE, filteredData);
+
+  res.json(filteredData);
+
+});
+
 /* ---------- streak route ---------- */
 app.get('/api/streak', (req, res) => {
   const streak = loadFromFile(STREAK_FILE, { current: 0, best: 0, lastDate: null });
@@ -351,32 +377,6 @@ app.get('/api/streak', (req, res) => {
     streak: streak.current,
     bestStreak: streak.best
   });
-});
-
-app.delete("/api/tasks/:id", (req, res) => {
-  const tasks = loadFromFile(DB_FILE);
-  const user  = req.body.userid;
-
-  const filteredData = tasks.filter((a) => a.userid != user);
-  console.log(filteredData);
-
-  saveToFile(DB_FILE, filteredData);
-
-  res.json(filteredData);
-
-});
-
-app.delete("/api/account/:id", (req, res) => {
-  const accounts = loadFromFile(ACC_FILE);
-  const user  = req.body.userid;
-
-  const filteredData = accounts.filter((a) => a.userid != user);
-  console.log(filteredData);
-
-  saveToFile(ACC_FILE, filteredData);
-
-  res.json(filteredData);
-
 });
 
 if (require.main === module) {

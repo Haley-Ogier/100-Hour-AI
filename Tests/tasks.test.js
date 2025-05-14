@@ -111,6 +111,102 @@ describe('Goal Creation (POST /api/tasks)', () => {
     expect(tasksStore).toHaveLength(1);
   });
 
+  it('creates a MEDIUM goal (with deposit)', async () => {
+    const payload = {
+      title: 'Read 60 pages',
+      deadline: '2025-05-13',
+      description: 'Part of 120-book challenge',
+      type: 'longTermGoal',
+      mode: 'medium'
+    };
+
+    const { status, body } = await request(app).post('/api/tasks').send(payload);
+
+    expect(status).toBe(201);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        deposit: 10,
+        depositPaid: true,
+        completed: false,
+        ...payload
+      })
+    );
+    expect(tasksStore).toHaveLength(2);
+  });
+
+  it('creates a HARD goal (with deposit)', async () => {
+    const payload = {
+      title: 'Read 120 pages',
+      deadline: '2025-05-13',
+      description: '',
+      type: 'longTermGoal',
+      mode: 'hard'
+    };
+
+    const { status, body } = await request(app).post('/api/tasks').send(payload);
+
+    expect(status).toBe(201);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        deposit: 30,
+        depositPaid: true,
+        completed: false,
+        ...payload
+      })
+    );
+    expect(tasksStore).toHaveLength(3);
+  });
+
+  it('creates a MEDIUM goal (no deposit)', async () => {
+    const payload = {
+      title: 'Write physics notesheet',
+      deadline: '2025-05-13',
+      description: 'In prep for exam',
+      type: 'shortTermGoal',
+      mode: 'medium'
+    };
+
+    const { status, body } = await request(app).post('/api/tasks').send(payload);
+
+    expect(status).toBe(201);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        deposit: 0,
+        depositPaid: false,
+        completed: false,
+        ...payload
+      })
+    );
+    expect(tasksStore).toHaveLength(4);
+  });
+
+  it('creates a HARD goal (no deposit)', async () => {
+    const payload = {
+      title: 'Complete reflection paper',
+      deadline: '2025-05-13',
+      description: 'As last nutrition class assignment',
+      type: 'shortTermGoal',
+      mode: 'hard'
+    };
+
+    const { status, body } = await request(app).post('/api/tasks').send(payload);
+
+    expect(status).toBe(201);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        deposit: 0,
+        depositPaid: false,
+        completed: false,
+        ...payload
+      })
+    );
+    expect(tasksStore).toHaveLength(4);
+  });
+
   it('rejects MEDIUM goal without deposit', async () => {
     const { status } = await request(app)
       .post('/api/tasks')
