@@ -3,7 +3,8 @@
  *
  * ├─ Backend/server.js   ← exports the Express app
  * ├─ Backend/tasks.json  ← mocked in-memory
- * └─ Backend/streak.json ← mocked in-memory
+ * ├─ Backend/streak.json ← mocked in-memory
+ * └─ Backend/accounts.json ← mocked in-memory
  *
  * supertest spins the Express app in-memory, no “npm start” needed.
  */
@@ -11,15 +12,17 @@ const request = require('supertest');
 const fs      = require('fs');
 const path    = require('path');
 
-const serverPath  = path.join(__dirname, '..', 'Backend', 'server.js');
-const TASKS_FILE  = path.join(__dirname, '..', 'Backend', 'tasks.json');
-const STREAK_FILE = path.join(__dirname, '..', 'Backend', 'streak.json');
+const serverPath   = path.join(__dirname, '..', 'Backend', 'server.js');
+const TASKS_FILE   = path.join(__dirname, '..', 'Backend', 'tasks.json');
+const STREAK_FILE  = path.join(__dirname, '..', 'Backend', 'streak.json');
+const ACCOUNT_FILE = path.join(__dirname, '..', 'Backend', 'accounts.json');
 
 /* ------------------------------------------------------------------ */
 /* In-memory “files”                                                  */
 /* ------------------------------------------------------------------ */
-let tasksStore  = [];
-let streakStore = { current: 0, best: 0, lastDate: null };
+let tasksStore   = [];
+let streakStore  = { current: 0, best: 0, lastDate: null };
+let accountStore = [];
 
 /* Helpers ---------------------------------------------------------- */
 const todayISO = (shift = 0) => {
@@ -35,8 +38,9 @@ let app;                                // Express instance
 
 beforeEach(() => {
   jest.resetModules();
-  tasksStore  = [];
-  streakStore = { current: 0, best: 0, lastDate: null };
+  tasksStore   = [];
+  streakStore  = { current: 0, best: 0, lastDate: null };
+  accountStore = [];
 
   /* save real fs fns so we can fall back for all other paths */
   const realRead   = fs.readFileSync.bind(fs);
@@ -47,8 +51,9 @@ beforeEach(() => {
   jest
     .spyOn(fs, 'readFileSync')
     .mockImplementation((file, ...args) => {
-      if (file === TASKS_FILE)  return JSON.stringify(tasksStore,  null, 2);
-      if (file === STREAK_FILE) return JSON.stringify(streakStore, null, 2);
+      if (file === TASKS_FILE)   return JSON.stringify(tasksStore,   null, 2);
+      if (file === STREAK_FILE)  return JSON.stringify(streakStore,  null, 2);
+      if (file === ACCOUNT_FILE) return JSON.stringify(accountStore, null, 2);
       return realRead(file, ...args);                // delegate anything else
     });
 
@@ -56,8 +61,9 @@ beforeEach(() => {
   jest
     .spyOn(fs, 'writeFileSync')
     .mockImplementation((file, data, ...args) => {
-      if (file === TASKS_FILE)       tasksStore  = JSON.parse(data);
-      else if (file === STREAK_FILE) streakStore = JSON.parse(data);
+      if (file === TASKS_FILE)        tasksStore   = JSON.parse(data);
+      else if (file === STREAK_FILE)  streakStore  = JSON.parse(data);
+      else if (file === ACCOUNT_FILE) accountStore = JSON.parse(data);
       else return realWrite(file, data, ...args);    // delegate
     });
 
@@ -65,7 +71,7 @@ beforeEach(() => {
   jest
     .spyOn(fs, 'existsSync')
     .mockImplementation(file => {
-      if (file === TASKS_FILE || file === STREAK_FILE) return true;
+      if (file === TASKS_FILE || file === STREAK_FILE || file === ACCOUNT_FILE) return true;
       return realExists(file);                       // delegate
     });
 
@@ -84,7 +90,40 @@ afterEach(() => {
 });
 
 /* ------------------------------------------------------------------ */
-/* FR-1 : Goal creation & deposit rules                               */
+/* FR-1 : Account Login                                               */
+/* ------------------------------------------------------------------ */
+describe('Account Login', () => {
+  it('create a new account', async () => {
+    const userid = Date.now().toString()
+    const test_account = {
+      userid: userid,
+      username: "test account",
+      email: "fake@email.com",
+      password: "Fake75#",
+      balance: 500,
+      transactions: [],
+      tagline: "Here is my tagline",
+      createdAt: new Date().toISOString()
+    }
+  
+    const { status, body } = await (await request(app).post('/api/tasks')).send(test_account);
+
+    expect(status).toBe(201);
+    expect(body).toEqual(
+      expect.objectContaining({
+        userid: userid,
+        username: "test account",
+        transactions: [],
+        balance: 500
+      })
+    );
+    expect(accountStore).toHaveLength(1);
+  });
+
+});
+
+/* ------------------------------------------------------------------ */
+/* FR-2 : Goal creation & deposit rules                               */
 /* ------------------------------------------------------------------ */
 describe('Goal Creation (POST /api/tasks)', () => {
   it('creates an EASY goal (no deposit)', async () => {
@@ -136,7 +175,7 @@ describe('Goal Creation (POST /api/tasks)', () => {
 });
 
 /* ------------------------------------------------------------------ */
-/* FR-2 : Completion & persistent streak                              */
+/* FR-3 : Completion & persistent streak                              */
 /* ------------------------------------------------------------------ */
 describe('Task completion & streak logic', () => {
   it('marks complete → streak.current = 1, best = 1', async () => {

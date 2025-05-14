@@ -64,14 +64,14 @@ app.get("/api/account", (req, res) => {
 
 app.post('/api/account', (req, res) => {
   const accounts = loadFromFile(ACC_FILE);
-  const { userid, username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'username, email, & password required' });
   }
 
   const newAcc = {
-    userid,
+    userid: Date.now().toString(),
     username,
     email,
     password,

@@ -123,6 +123,7 @@
     "createdAt": "2025-05-11T01:34:35.314Z"
   },
   {
+    "userid": "1723512345678",
     "username": "depositTest",
     "email": "depo@example.edu",
     "password": "?'8->rq,Hq=_]pY",
@@ -167,5 +168,15 @@
     ],
     "tagline": "Here is my tagline",
     "createdAt": "2025-05-11T23:59:20.246Z"
+  },
+  {
+    "userid": "1747182618502",
+    "username": "TestUID",
+    "email": "UID@Email.com",
+    "password": "Testing32-",
+    "balance": 100,
+    "transactions": [],
+    "tagline": "Here is my tagline",
+    "createdAt": "2025-05-14T00:30:18.502Z"
   }
 ]
