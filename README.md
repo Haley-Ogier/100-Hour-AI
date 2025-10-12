@@ -1,19 +1,50 @@
-# **1.1 Overview**
+# 100-Hour AI Goal Coach
 
-**Project Description & Objectives**
+## Overview
+The **100-Hour AI Goal Coach** is an interactive goal-setting and coaching web application designed to make personal growth engaging, structured, and motivating. It combines habit science, accountability mechanisms, and AI-powered assistance to help users set, track, and achieve their goals.
 
-Our project is an **AI Coaching App** designed to help users effectively **set and achieve goals** by leveraging proven habit-formation science and personalized AI-driven recommendations. Instead of letting social media distractions dominate attention, we introduce a system that **gamifies goal achievement** with features like monetary deposits for accountability, streak tracking, and AI-based task breakdown.
+---
 
-**Intended Audience**
+## Features
 
-- Students, professionals, or hobbyists aiming to **build consistent habits** or complete specific goals (e.g., finishing a course, writing a book, developing a new skill).
-- Anyone who struggles with **procrastination** or **distractions** and wants a **structured**, AI-assisted approach to stay on track.
+### 🎯 Interactive Homepage
+- Displays **daily streaks** and **personal bests** to keep motivation high.  
+- Provides a **timeline view** of tasks, short-term goals, and long-term goals with their deadlines.  
+- Past-due items are **highlighted in red** with a warning symbol for quick visibility.  
+- Different symbols clearly distinguish **tasks**, **short-term goals**, and **long-term goals**.  
 
-**Primary Goals & Motivations**
+### ✅ Goal Completion & Progress
+- Marking a goal as complete triggers a **celebratory confetti animation**.  
+- Completed items are hidden for focus but can be expanded in the **“Past” view** to reflect on accomplishments.  
 
-1. **Create a More Compelling Alternative** to social media by making **goal pursuit “addictive”** in a positive sense.
-2. **Leverage Theories Like Atomic Habits & Deep Work** to ensure users form **tiny, consistent improvements** and **focused work blocks**.
-3. **Encourage Accountability & Engagement** through **financial stakes** (loss aversion) and community support.
+### 💰 Accountability System
+- Users choose a difficulty level when creating a goal:  
+  - **Easy**: No deposit required.  
+  - **Medium**: Deposit refunded upon completion or if the goal is quit.  
+  - **Hard**: Deposit is only refunded upon completion (no refund if forfeited).  
+- This monetary system encourages accountability and commitment.  
+
+### 🤖 AI Integration
+- An **AI assistant** helps break down large goals into smaller, actionable steps.  
+- Provides **motivation, encouragement, and guidance** to refine goals.  
+- A dedicated **AI support page** allows users to chat for motivation, habit advice, and goal-related questions.  
+- Supports **multiple AI chat threads** so users can organize different conversations.  
+
+### 👤 Profile & Settings
+- Profile page displays **deposit balances** and account information.  
+- Allows users to manage their **personal settings**.  
+
+---
+
+## Tech Stack
+- **Frontend**: React, HTML, CSS  
+- **Backend**: Node.js, Express  
+- **AI Assistant**: Integrated through external API (API key not included in repo)  
+
+---
+
+## Project Goal
+The mission of the **100-Hour AI Goal Coach** is to create a tool that helps people achieve their ambitions through gamification, accountability, and AI-driven support. It is designed to provide structure, motivation, and personalized guidance while remaining simple and enjoyable to use.
 
 # Getting Started
 
@@ -39,38 +70,33 @@ cd ../Backend
 npm install
 ```
 
-## 3) Environment Variables
-The backend needs a .env file (API keys, DB credentials, etc.).
-Contact me @sasanchez@umass.edu to obtain it, then place it in your backend folder:
-Backend/.env
-
-## 4) Running the Project
+## 3) Running the Project
 You’ll need two terminals—one for the React app and one for the Express server.
 
-### 4.1 Start the React App
+### 3.1 Start the React App
 ```bash
 cd Frontend        
 npm start
 ```
-### 4.2 Start the Express Server
+### 3.2 Start the Express Server
 ```bash
 cd Backend        # open a new terminal first
 node server.js
 ```
 
-## 5) Testing the App
+## 4) Testing the App
 Confirm both servers are running.
 
 Visit http://localhost:3000 in your browser.
 
 Interact with the UI—network calls should hit the backend on port 4000 (or the port in .env).
 
-## 6) Project Flow
+## 5) Project Flow
 Layer	Responsibilities
 React Frontend	UI, routing, user input
 Express Backend	AI logic, habit & streak tracking, deposit handling
 
-## 7 Need Help?
+## 6 Need Help?
 Problems or questions? Reach out to me.
 
 You can also open an issue in this repo if it’s on GitHub.
